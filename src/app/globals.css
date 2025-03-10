@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -11,33 +10,65 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-lavenderMoon-base: #575279;
+  --color-lavenderMoon-surface: #635f8e;
+  --color-lavenderMoon-overlay: #6e6a86;
+  --color-lavenderMoon-muted: #9893a5;
+  --color-lavenderMoon-subtle: #908caa;
+  --color-lavenderMoon-text: #faf4ed;
+  --color-lavenderMoon-love: #eb6f92;
+  --color-lavenderMoon-gold: #f6c177;
+  --color-lavenderMoon-rose: #ebbcba;
+  --color-lavenderMoon-pine: #56b6c2;
+  --color-lavenderMoon-foam: #9ccfd8;
+  --color-lavenderMoon-iris: #c4a7e7;
+  --color-lavenderMoon-highlightLow: #6e6a86;
+  --color-lavenderMoon-highlightMed: #817f96;
+  --color-lavenderMoon-highlightHigh: #9693a5;
+  --color-lavenderDawn-base: #faf4ed;
+  --color-lavenderDawn-surface: #fffaf3;
+  --color-lavenderDawn-overlay: #f2e9e1;
+  --color-lavenderDawn-muted: #797593;
+  --color-lavenderDawn-subtle: #655e7e;
+  --color-lavenderDawn-text: #4a4458;
+  --color-lavenderDawn-love: #b4637a;
+  --color-lavenderDawn-gold: #ea9d34;
+  --color-lavenderDawn-rose: #d7827e;
+  --color-lavenderDawn-pine: #286983;
+  --color-lavenderDawn-foam: #56949f;
+  --color-lavenderDawn-iris: #575279;
+  --color-lavenderDawn-highlightLow: #f4ede8;
+  --color-lavenderDawn-highlightMed: #dfdad9;
+  --color-lavenderDawn-highlightHigh: #cecacd;
+  --color-border: var(--color-lavenderMoon-base);
+  --color-input: var(--color-lavenderMoon-surface);
+  --color-ring: var(--color-lavenderMoon-overlay);
+  --color-background: var(--color-lavenderMoon-surface);
+  --color-foreground: var(--color-lavenderMoon-text);
+  --color-primary: var(--color-lavenderMoon-love);
+  --color-primary-foreground: var(--color-lavenderMoon-text);
+  --color-secondary: var(--color-lavenderDawn-surface);
+  --color-secondary-foreground: var(--color-lavenderDawn-text);
+  --color-destructive: var(--color-lavenderMoon-rose);
+  --color-destructive-foreground: var(--color-lavenderDawn-base);
+  --color-muted: var(--color-lavenderMoon-muted);
+  --color-muted-foreground: var(--color-lavenderMoon-subtle);
+  --color-accent: var(--color-lavenderMoon-gold);
+  --color-accent-foreground: var(--color-lavenderMoon-text);
+  --color-popover: var(--color-lavenderDawn-overlay);
+  --color-popover-foreground: var(--color-lavenderDawn-text);
+  --color-card: var(--color-lavenderDawn-base);
+  --color-card-foreground: var(--color-lavenderDawn-text);
+  --radius-lg: 8px;
+  --radius-md: 6px;
+  --radius-sm: 4px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* Dark mode theme applied with media query */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 @layer base {
-  :root {
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
-
-  .dark {
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
 }
-
 
 body {
   background: var(--background);
