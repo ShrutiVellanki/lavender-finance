@@ -7,26 +7,28 @@ npm i
 npm dev
 ```
 
-To respect the 4 hour time constraint, I've harvested a lot of components and styling from a previous projects.
+## A Note to the Evaluators
 
-The chart comes from https://ui.shadcn.com/charts.
+![alt text](image.png)
 
-Because I ran into CORS errors when fetching data, I use test data (`test-data.ts`) that I return in `api.ts`.
+To respect the 4-hour time constraint, I've reused several components and styles from previous projects.
 
-I use Typescript to ensure strong typing, but again, due to time constraints, I use `any` through places in the project.
+The chart comes from [ShadCN's UI library](https://ui.shadcn.com/charts).
 
-For the display, I've chosen to group by account type and use an accordion for this.
+I ran into CORS errors while fetching data, so I used test data (from `test-data.ts`) that I return in `api.ts`.
 
-For the components:
+I’m using TypeScript to ensure strong typing, but due to time constraints, I had to use `any` in a few places within the project.
 
-- I tried to make sure I followed Atomic Design principles and group them into related folders as appropriate
-- I use Tailwind v4 for styling and define my design tokens in `globals.css` (see https://tailwindcss.com/docs/theme)
-- I implement a theme switcher using `dark:` and React Context
+For the display, I've grouped data by account type and used an accordion for this layout.
 
-If I had more time:
+### Regarding the components:
+- I aimed to follow Atomic Design principles and organized components into related folders accordingly.
+- I use Tailwind CSS (v4) for styling, with design tokens defined in `globals.css` (see [Tailwind Docs](https://tailwindcss.com/docs/theme)).
+- I’ve implemented a theme switcher using `dark:` mode and React Context for state management.
 
-- I'd create stronger interfaces
-- Add filters for account type and subtype
-- Ensure performance testing, accessibility, unit tests and security
-- Add i18n support
-- Add time scale options to the net worth chart
+### If I had more time, I would:
+- Create stronger interfaces and types.
+- Add filters for account types and subtypes.
+- Ensure performance testing, accessibility, unit tests, and security.
+- Add internationalization (i18n) support.
+- Add time scale options to the net worth chart.
