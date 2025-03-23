@@ -1,4 +1,4 @@
-import { accountTypes } from "@/utils/utils";
+import { accountTypeLabels } from "@/constants/account-constants";
 import {
   CreditCard,
   Banknote as Bank,
@@ -34,7 +34,12 @@ const getAccountGroupIcon = (type: string) => {
 export const AccountGroup: React.FC<AccountGroupProps> = ({ type }) => {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-lg font-semibold">{type}</span>
+      <div className="flex items-center space-x-2">
+        {getAccountGroupIcon(type)}
+        <span className="text-lg font-semibold text-lavenderDawn-text dark:text-lavenderMoon-text">
+          {accountTypeLabels[type as keyof typeof accountTypeLabels] || type}
+        </span>
+      </div>
     </div>
   );
 };

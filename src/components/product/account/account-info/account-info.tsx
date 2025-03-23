@@ -1,18 +1,23 @@
 import type React from "react";
 import AccountBalance from "../account-balance/account-balance";
+import { accountSubtypeLabels } from "@/constants/account-constants";
 
 export interface AccountInfoProps {
   name: string;
   balance: number;
   description?: string;
   className?: string;
+  subtype?: string;
 }
 
 export const AccountInfo: React.FC<AccountInfoProps> = ({
   name,
   balance,
   description,
+  subtype,
 }) => {
+  const formattedSubtype = subtype ? accountSubtypeLabels[subtype as keyof typeof accountSubtypeLabels] || subtype : undefined;
+  
   return (
     <button className={`w-full flex items-center justify-between p-4`}>
       <div className="flex items-center space-x-4">
@@ -22,11 +27,11 @@ export const AccountInfo: React.FC<AccountInfoProps> = ({
           >
             {name}
           </span>
-          {description && (
+          {(description || formattedSubtype) && (
             <span
               className={`text-sm text-lavenderDawn-muted dark:text-lavenderMoon-iris`}
             >
-              {description}
+              {formattedSubtype || description}
             </span>
           )}
         </div>
