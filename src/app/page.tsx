@@ -2,26 +2,39 @@
 import type React from "react";
 import { AccountInfo } from "../components/product/account/account-info/account-info";
 import { useTheme, ThemeProvider } from "../theme-provider";
-import { ThemeSwitcher } from "../components/theme-switcher";
+import { Navbar } from "../components/navbar";
+import { Footer } from "../components/footer";
 import { Accordion } from "../components/accordion/accordion";
-import { aggregateBalancesByDate, groupAccountsByType } from "@/utils/utils";
+import { aggregateBalancesByDate, groupAccountsByType, filterAccounts } from "@/utils/utils";
 import NetWorthChart from "@/components/product/net-worth/net-worth";
-import AccountGroup from "@/components/product/account/account-group/account-group";
 import { fetchAccountData, fetchChartData } from "@/api/api";
 import { useState, useEffect } from "react";
+import { Account, AccountData, NetWorthData, AccountFilters, AccountType, AccountSubtype } from "../types";
+import { AccountGroup } from "@/components/product/account/account-group/account-group";
+import { AccountFiltersPanel } from "@/components/product/filters/account-filters";
 
 const Home: React.FC = () => {
   const { theme } = useTheme();
-  const [groupedAccounts, setGroupedAccounts] = useState<any>(null);
-  const [totalBalanceByDateArray, setTotalBalanceByDateArray] =
-    useState<any>(null);
+  const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
+  const [filteredAccounts, setFilteredAccounts] = useState<{ [key: string]: Account[] } | null>(null);
+  const [totalBalanceByDateArray, setTotalBalanceByDateArray] = useState<NetWorthData[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<AccountFilters>({
+    types: Object.values(AccountType),
+    subtypes: Object.values(AccountSubtype),
+    dateRange: {
+      start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days ago
+      end: new Date().toISOString().split('T')[0],
+    },
+  });
 
   useEffect(() => {
     fetchAccountData()
       .then((data) => {
-        setGroupedAccounts(groupAccountsByType(data));
+        const grouped = groupAccountsByType(data);
+        setGroupedAccounts(grouped);
+        setFilteredAccounts(grouped);
       })
       .catch((err) => {
         setError(err.message);
@@ -42,6 +55,13 @@ const Home: React.FC = () => {
       });
   }, []);
 
+  useEffect(() => {
+    if (groupedAccounts) {
+      const filtered = filterAccounts(groupedAccounts, filters);
+      setFilteredAccounts(filtered);
+    }
+  }, [filters, groupedAccounts]);
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -55,24 +75,26 @@ const Home: React.FC = () => {
       data-theme={theme}
       className={`min-h-screen flex flex-col bg-lavenderDawn-base text-lavenderDawn-text dark:bg-lavenderMoon-base dark:text-lavenderMoon-text`}
     >
-      <ThemeSwitcher />
+      <Navbar />
       <main className="flex-grow max-w-4xl w-full mx-auto p-4 space-y-6 mt-16 mb-20">
-        <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray} />
+        <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray || []} />
+        <AccountFiltersPanel filters={filters} onFilterChange={setFilters} />
         <div className="space-y-4">
-          {Object.keys(groupedAccounts).map((type) => (
-            <Accordion key={type} header={<AccountGroup type={type as any} />}>
-              {groupedAccounts[type].map((account: any) => (
+          {filteredAccounts && Object.entries(filteredAccounts).map(([type, accounts]) => (
+            <Accordion key={type} header={<AccountGroup type={type} />}>
+              {accounts.map((account) => (
                 <AccountInfo
                   key={account.name}
                   name={account.name}
                   balance={account.current_balance}
-                  description={`${account.subtype} ****${account.number.toString().slice(-4)}`}
+                  description={`${account.subtype} ****${account.name.slice(-4)}`}
                 />
               ))}
             </Accordion>
           ))}
         </div>
       </main>
+      <Footer />
     </div>
   ) : (
     <></>

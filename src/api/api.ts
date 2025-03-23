@@ -1,3 +1,4 @@
+import { Account, AccountData, ChartData } from "../types";
 import { accountData, chartData } from "./test-data";
 
 const corsProxyUrl = "https://cors-anywhere.herokuapp.com/";
@@ -15,12 +16,14 @@ export const fetchWrapper = async (
   return response.json();
 };
 
-export const fetchChartData = async () => {
-  // return await fetchWrapper(`${corsProxyUrl}${"https://monarch-ch-ts1-584627ff4d57.herokuapp.com/snapshots"}`);
-  return chartData;
+export const fetchAccountData = async (): Promise<AccountData> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return accountData;
 };
 
-export const fetchAccountData = async () => {
-  // return await fetchWrapper(`${corsProxyUrl}https://monarch-ch-ts1-584627ff4d57.herokuapp.com/accounts`);
-  return accountData;
+export const fetchChartData = async (): Promise<ChartData> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  return chartData;
 };

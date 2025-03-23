@@ -1,3 +1,5 @@
+import { Account, AccountData, ChartData, NetWorthData, AccountFilters } from "../types";
+
 export const accountTypes = {
   credit: "Credit",
   depository: "Bank",
@@ -10,42 +12,55 @@ export const accountTypes = {
   other: "Other",
 } as any;
 
-export const groupAccountsByType = (accounts: { [key: string]: any }) => {
-  return Object.entries(accounts).reduce(
-    (acc: any, [key, account]: [string, any]) => {
-      const accountType = account.type || "Unknown";
-      if (!acc[accountType]) {
-        acc[accountType] = [];
-      }
-      acc[accountType].push({ ...account, number: key });
-      return acc;
-    },
-    {},
-  );
+export const groupAccountsByType = (accounts: AccountData): { [key: string]: Account[] } => {
+  return Object.values(accounts).reduce((acc: { [key: string]: Account[] }, account) => {
+    const type = account.type;
+    if (!acc[type]) {
+      acc[type] = [];
+    }
+    acc[type].push(account);
+    return acc;
+  }, {});
 };
 
-export const aggregateBalancesByDate = (chartData: {
-  [accountNumber: string]: { balance: number; date: string }[];
-}) => {
-  const groupedData: { [date: string]: number } = {};
-
-  // Group balances by date and sum them
-  Object.values(chartData).forEach((accountBalances) => {
-    accountBalances.forEach(({ balance, date }) => {
-      if (!groupedData[date]) {
-        groupedData[date] = 0;
-      }
-      groupedData[date] += balance;
-    });
+export const aggregateBalancesByDate = (chartData: ChartData): NetWorthData[] => {
+  // Get all unique dates
+  const dates = new Set<string>();
+  Object.values(chartData).forEach(accountData => {
+    accountData.forEach(point => dates.add(point.date));
   });
 
-  // Convert the grouped data into an array format and sort by date
-  const sortedData = Object.keys(groupedData)
-    .map((date) => ({
-      date,
-      balance: groupedData[date],
-    }))
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  // Calculate total balance for each date
+  return Array.from(dates).map(date => {
+    const totalBalance = Object.values(chartData).reduce((sum, accountData) => {
+      const point = accountData.find(p => p.date === date);
+      return sum + (point?.balance || 0);
+    }, 0);
 
-  return sortedData;
+    return {
+      date,
+      balance: totalBalance
+    };
+  }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+};
+
+export const filterAccounts = (
+  groupedAccounts: { [key: string]: Account[] },
+  filters: AccountFilters
+): { [key: string]: Account[] } => {
+  const filtered: { [key: string]: Account[] } = {};
+
+  Object.entries(groupedAccounts).forEach(([type, accounts]) => {
+    if (filters.types.includes(type as any)) {
+      const filteredAccounts = accounts.filter(account => 
+        filters.subtypes.includes(account.subtype)
+      );
+
+      if (filteredAccounts.length > 0) {
+        filtered[type] = filteredAccounts;
+      }
+    }
+  });
+
+  return filtered;
 };

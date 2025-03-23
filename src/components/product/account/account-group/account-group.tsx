@@ -10,13 +10,7 @@ import {
 import React from "react";
 
 interface AccountGroupProps {
-  type:
-    | "credit_card"
-    | "bank"
-    | "depository"
-    | "vehicle"
-    | "investment"
-    | "other";
+  type: string;
 }
 
 const getAccountGroupIcon = (type: string) => {
@@ -37,13 +31,10 @@ const getAccountGroupIcon = (type: string) => {
   }
 };
 
-const AccountGroup: React.FC<AccountGroupProps> = ({ type }) => {
+export const AccountGroup: React.FC<AccountGroupProps> = ({ type }) => {
   return (
-    <div className="flex gap-4">
-      {getAccountGroupIcon(type)}
-      <div>{accountTypes[type]}</div>
+    <div className="flex items-center justify-between">
+      <span className="text-lg font-semibold">{type}</span>
     </div>
   );
 };
-
-export default AccountGroup;
