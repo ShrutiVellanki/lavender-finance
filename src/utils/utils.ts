@@ -1,4 +1,4 @@
-import { Account, AccountData, ChartData, NetWorthData, AccountFilters } from "../types";
+import { Account, AccountData, ChartData, NetWorthData } from "../types";
 
 export const accountTypes = {
   credit: "Credit",
@@ -42,25 +42,4 @@ export const aggregateBalancesByDate = (chartData: ChartData): NetWorthData[] =>
       balance: totalBalance
     };
   }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-};
-
-export const filterAccounts = (
-  groupedAccounts: { [key: string]: Account[] },
-  filters: AccountFilters
-): { [key: string]: Account[] } => {
-  const filtered: { [key: string]: Account[] } = {};
-
-  Object.entries(groupedAccounts).forEach(([type, accounts]) => {
-    if (filters.types.includes(type as any)) {
-      const filteredAccounts = accounts.filter(account => 
-        filters.subtypes.includes(account.subtype)
-      );
-
-      if (filteredAccounts.length > 0) {
-        filtered[type] = filteredAccounts;
-      }
-    }
-  });
-
-  return filtered;
 };

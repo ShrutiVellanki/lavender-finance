@@ -2,6 +2,7 @@ export enum AccountType {
   DEPOSITORY = "depository",
   CREDIT = "credit",
   INVESTMENT = "investment",
+  BROKERAGE = "brokerage",
   LOAN = "loan",
   REAL_ESTATE = "real_estate",
   VEHICLE = "vehicle",
@@ -24,8 +25,8 @@ export enum AccountSubtype {
 export interface Account {
   current_balance: number;
   name: string;
-  subtype: AccountSubtype;
-  type: AccountType;
+  subtype: string;
+  type: string;
   id: string;
 }
 
@@ -48,8 +49,8 @@ export interface NetWorthData {
 }
 
 export interface AccountFilters {
-  types: AccountType[];
-  subtypes: AccountSubtype[];
+  types: string[];
+  subtypes: string[];
   dateRange: {
     start: string;
     end: string;
