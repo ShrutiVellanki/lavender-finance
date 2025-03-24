@@ -63,27 +63,27 @@ export const Accordion: React.FC<AccordionProps> = ({
 
   return (
     <div
-      className={`border rounded-lg overflow-hidden bg-lavenderDawn-overlay dark:bg-lavenderMoon-overlay ${variantClasses[variant]}`}
+      className={`border rounded-xl overflow-hidden bg-lavenderDawn-overlay/50 dark:bg-lavenderMoon-overlay/50 backdrop-blur-sm ${variantClasses[variant]}`}
     >
       <button
-        className={`w-full text-left p-4 flex justify-between items-center focus:outline-none focus:ring-2 focus:ring-lavenderDawn-pine focus:ring-opacity-50 ${headerClassName}`}
+        className={`w-full text-left p-4 flex justify-between items-center focus:outline-none ring-1 ring-lavenderDawn-pine/20 focus:ring-opacity-50 transition-all duration-200 ${headerClassName}`}
         onClick={handleToggle}
       >
         <div className="flex-grow">{header}</div>
         {icon ? (
           <div className="flex-shrink-0 ml-2">{icon}</div>
         ) : isOpen ? (
-          <ChevronUp className="w-5 h-5 flex-shrink-0 ml-2" />
+          <ChevronUp className="w-5 h-5 flex-shrink-0 ml-2 text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50" />
         ) : (
-          <ChevronDown className="w-5 h-5 flex-shrink-0 ml-2" />
+          <ChevronDown className="w-5 h-5 flex-shrink-0 ml-2 text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50" />
         )}
       </button>
       <div
-        className={`transition-max-height duration-300 ease-in-out overflow-hidden ${isOpen ? "max-h-screen" : "max-h-0"} ${contentClassName ?? ""}`}
+        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        } ${contentClassName ?? ""}`}
       >
-        <div
-          className={`p-4 bg-lavenderDawn-overlay dark:bg-lavenderMoon-overlay`}
-        >
+        <div className={`p-4 bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30`}>
           {children}
         </div>
       </div>

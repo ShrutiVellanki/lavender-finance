@@ -1,33 +1,22 @@
 import React from "react";
+import { formatCurrency } from "@/lib/utils";
 
 interface AccountBalanceProps {
   balance: number;
-  balanceColor?: string;
+  bold?: boolean;
 }
 
-const AccountBalance: React.FC<AccountBalanceProps> = ({
-  balance,
-  balanceColor,
-}) => {
+export const AccountBalance: React.FC<AccountBalanceProps> = ({ balance, bold = false }) => {
+  const formattedBalance = formatCurrency(balance);
   const isNegative = balance < 0;
-  const formattedBalance = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(Math.abs(balance));
 
   return (
     <span
-      className={`font-medium ${
-        balanceColor ||
-        (isNegative
-          ? `text-lavenderDawn-love dark:text-lavenderMoon-love`
-          : `text-lavenderDawn-pine dark:text-lavenderMoon-pine`)
-      }`}
+      className={`text-sm tracking-tight ${
+        bold ? "font-semibold" : "font-normal"
+      } ${isNegative ? "text-rose-600 dark:text-rose-400" : "text-slate-900 dark:text-slate-50"}`}
     >
-      {isNegative && "-"}
       {formattedBalance}
     </span>
   );
 };
-
-export default AccountBalance;

@@ -1,3 +1,4 @@
+import type React from "react";
 import { accountTypeLabels } from "@/constants/account-constants";
 import {
   CreditCard,
@@ -7,14 +8,16 @@ import {
   House,
   DollarSign,
 } from "lucide-react";
-import React from "react";
+import { Account } from "@/types";
+import { AccountBalance } from "../account-balance/account-balance";
 
 interface AccountGroupProps {
   type: string;
+  accounts: Account[];
 }
 
 const getAccountGroupIcon = (type: string) => {
-  const className = `w-6 h-6 text-lavenderDawn-iris dark:text-lavenderMoon-iris`;
+  const className = `w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]`;
   switch (type) {
     case "credit":
       return <CreditCard className={className} />;
@@ -31,15 +34,18 @@ const getAccountGroupIcon = (type: string) => {
   }
 };
 
-export const AccountGroup: React.FC<AccountGroupProps> = ({ type }) => {
+export const AccountGroup: React.FC<AccountGroupProps> = ({ type, accounts }) => {
+  const totalBalance = accounts.reduce((sum, account) => sum + account.current_balance, 0);
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
         {getAccountGroupIcon(type)}
-        <span className="text-lg font-semibold text-lavenderDawn-text dark:text-lavenderMoon-text">
+        <span className="text-sm font-medium tracking-tight text-slate-900 dark:text-slate-50">
           {accountTypeLabels[type as keyof typeof accountTypeLabels] || type}
         </span>
       </div>
+      <AccountBalance balance={totalBalance} bold={true} />
     </div>
   );
 };
