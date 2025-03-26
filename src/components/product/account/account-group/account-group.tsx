@@ -41,7 +41,7 @@ export const AccountGroup: React.FC<AccountGroupProps> = ({ type, accounts }) =>
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-2">
         {getAccountGroupIcon(type)}
-        <span className="text-sm font-medium tracking-tight text-slate-900 dark:text-slate-50">
+        <span className="text-sm font-medium tracking-tight text-stone-900 dark:text-stone-50">
           {accountTypeLabels[type as keyof typeof accountTypeLabels] || type}
         </span>
       </div>

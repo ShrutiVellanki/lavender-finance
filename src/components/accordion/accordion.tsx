@@ -42,7 +42,7 @@ export const Accordion: React.FC<AccordionProps> = ({
   headerClassName,
   contentClassName,
 }) => {
-  const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
+  const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(true);
 
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : uncontrolledIsOpen;
@@ -63,7 +63,7 @@ export const Accordion: React.FC<AccordionProps> = ({
 
   return (
     <div
-      className={`border rounded-xl overflow-hidden bg-lavenderDawn-overlay/50 dark:bg-lavenderMoon-overlay/50 backdrop-blur-sm ${variantClasses[variant]}`}
+      className={`border rounded-xl overflow-hidden bg-lavenderDawn-overlay/50 dark:bg-[#636363]/50 backdrop-blur-sm ${variantClasses[variant]}`}
     >
       <button
         className={`w-full text-left p-4 flex justify-between items-center focus:outline-none ring-1 ring-lavenderDawn-pine/20 focus:ring-opacity-50 transition-all duration-200 ${headerClassName}`}

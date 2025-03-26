@@ -21,7 +21,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
   const { theme } = useTheme();
   const isDark = theme === "dark";
   
-  const chartColor = isDark ? "#c4a7e7" : "#575279";
+  const chartColor = isDark ? "#575279" : "#575279";
   const gridColor = isDark ? "#6e6a86" : "#f4ede8";
   const textColor = isDark ? "#faf4ed" : "#4a4458";
   const tooltipBgColor = isDark ? "#635f8e" : "#fffaf3";
@@ -30,7 +30,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
 
   return (
     <>
-      <h1 className="text-xl font-semibold text-slate-600 tracking-tight dark:text-lavenderMoon-text">Accounts</h1>
+      <h1 className="text-xl font-semibold text-stone-600 tracking-tight dark:text-lavenderMoon-text">Accounts</h1>
       <ChartContainer config={chartConfig} className="max-h-[200px] w-full">
         {totalBalanceByDateArray && totalBalanceByDateArray.length > 0 ? (
           <AreaChart data={totalBalanceByDateArray}>

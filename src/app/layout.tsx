@@ -3,8 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: {
-    default: "Lavendar Finance",
-    template: "%s | Lavendar Finance"
+    default: "Lavender Finance",
+    template: "%s | Lavender Finance"
   },
   description: "Personal finance management and tracking",
   icons: {
