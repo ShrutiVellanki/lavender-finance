@@ -2,8 +2,7 @@
 import type React from "react";
 import { AccountInfo } from "@/components/product/account/account-info/account-info";
 import { useTheme, ThemeProvider } from "@/theme-provider";
-import { Navbar } from "@/components/layout/navbar/navbar";
-import { Footer } from "@/components/layout/footer/footer";
+import { Layout } from "@/components/layout/layout";
 import { Accordion } from "@/components/accordion/accordion";
 import { aggregateBalancesByDate, groupAccountsByType } from "@/utils/utils";
 import NetWorthChart from "@/components/product/net-worth/net-worth";
@@ -36,7 +35,7 @@ const AccountsPage: React.FC = () => {
       
       setGroupedAccounts(grouped);
       setTotalBalanceByDateArray(totalBalanceByDateArray);
-    } catch (err: unknown) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : "Failed to fetch data";
       setError(errorMessage);
     } finally {
@@ -57,12 +56,8 @@ const AccountsPage: React.FC = () => {
   }
 
   return (
-    <div
-      data-theme={theme}
-      className={`min-h-screen flex flex-col bg-lavenderDawn-base text-lavenderDawn-text dark:bg-lavenderMoon-base dark:text-lavenderMoon-text`}
-    >
-      <Navbar />
-      <main className="flex-grow max-w-4xl w-full mx-auto p-6 space-y-8 mt-16">
+    <div data-theme={theme}>
+      <Layout>
         <div className="space-y-8">
           <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray || []} />
           <div className="space-y-4">
@@ -85,8 +80,7 @@ const AccountsPage: React.FC = () => {
             ))}
           </div>
         </div>
-      </main>
-      <Footer />
+      </Layout>
     </div>
   );
 };
