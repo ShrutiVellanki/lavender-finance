@@ -1,18 +1,15 @@
 "use client";
 
 import React from "react";
+import { Loader2 } from "lucide-react";
 
-export const Loading: React.FC = () => {
-    
+export function Loading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-lavenderDawn-base dark:bg-lavenderMoon-base">
-      <div className="flex flex-col items-center space-y-6">
-        <div className="relative">
-          <div className="w-16 h-16 border-4 border-lavenderDawn-iris/20 dark:border-lavenderMoon-iris/20 rounded-full"></div>
-          <div className="w-16 h-16 border-4 border-lavenderDawn-iris dark:border-lavenderMoon-iris border-t-transparent rounded-full animate-spin absolute top-0 left-0"></div>
-        </div>
-        <p className="text-lavenderDawn-text dark:text-lavenderMoon-text text-lg font-medium animate-pulse"></p>
-      </div>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-lavenderDawn-base dark:bg-lavenderMoon-base">
+      <Loader2 className="w-12 h-12 text-lavenderDawn-iris dark:text-lavenderMoon-iris animate-spin" />
+      <p className="mt-4 text-lg font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
+        Loading your financial data...
+      </p>
     </div>
   );
-}; 
+} 

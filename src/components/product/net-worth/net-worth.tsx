@@ -144,7 +144,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
             </h2>
             <div className="group relative">
               <Info className="w-3 h-3 text-lavenderDawn-text/30 dark:text-lavenderMoon-text/30 cursor-help" />
-              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-[300px] hidden group-hover:block z-50">
+              <div className="fixed ml-2 w-[300px] hidden group-hover:block z-[9999]" style={{ top: 'var(--tooltip-y)', left: 'var(--tooltip-x)' }}>
                 <div className="bg-lavenderDawn-base dark:bg-lavenderMoon-base text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 text-xs p-3 rounded-lg shadow-xl border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
                   This may not show your correct net worth if you haven't added all assets and liabilities.
                 </div>
@@ -167,7 +167,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
         <div className="relative">
           <button
             onClick={() => setIsTimeRangeOpen(!isTimeRangeOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 bg-lavenderDawn-highlightLow/30 dark:bg-lavenderMoon-highlightLow/30 rounded-md hover:bg-lavenderDawn-highlightLow/50 dark:hover:bg-lavenderMoon-highlightLow/50 transition-colors"
+            className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 bg-lavenderDawn-highlightLow/30 dark:bg-lavenderMoon-highlightLow/30 rounded-md hover:bg-lavenderDawn-highlightLow/50 dark:hover:bg-lavenderMoon-highlightLow/50 transition-colors"
           >
             {TIME_RANGES.find(r => r.value === timeRange)?.label}
             <ChevronDown className="w-3 h-3" />
@@ -187,7 +187,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
                       setTimeRange(range.value);
                       setIsTimeRangeOpen(false);
                     }}
-                    className={`w-full px-3 py-1.5 text-left text-xs hover:bg-lavenderDawn-highlightLow/30 dark:hover:bg-lavenderMoon-highlightLow/30 transition-colors ${
+                    className={`w-full cursor-pointer px-3 py-1.5 text-left text-xs hover:bg-lavenderDawn-highlightLow/30 dark:hover:bg-lavenderMoon-highlightLow/30 transition-colors ${
                       timeRange === range.value 
                         ? 'text-lavenderDawn-text dark:text-lavenderMoon-text bg-lavenderDawn-highlightLow/20 dark:bg-lavenderMoon-highlightLow/20' 
                         : 'text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70'
@@ -224,6 +224,26 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
                     day: 'numeric'
                   });
                 }}
+                interval={(() => {
+                  const dataLength = filteredData.length;
+                  switch (timeRange) {
+                    case "1m":
+                      return Math.floor(dataLength / 6); // Show ~6 ticks for 1 month
+                    case "3m":
+                      return Math.floor(dataLength / 8); // Show ~8 ticks for 3 months
+                    case "6m":
+                      return Math.floor(dataLength / 10); // Show ~10 ticks for 6 months
+                    case "ytd":
+                    case "1y":
+                      return Math.floor(dataLength / 12); // Show ~12 ticks for 1 year
+                    case "all":
+                      return Math.floor(dataLength / 12); // Show ~12 ticks for all time
+                    default:
+                      return "preserveStartEnd";
+                  }
+                })()}
+                minTickGap={30}
+                padding={{ left: 10, right: 10 }}
               />
               <YAxis
                 stroke={textColor}

@@ -12,9 +12,9 @@ export const AccountBalance: React.FC<AccountBalanceProps> = ({ balance, bold = 
 
   return (
     <span
-      className={`text-sm tracking-tight ${
-        bold ? "font-semibold" : "font-normal"
-      } ${isNegative ? "text-rose-600 dark:text-rose-400" : "text-stone-900 dark:text-stone-50"}`}
+      className={`text-base tracking-tight ${
+        bold ? "font-semibold" : "font-medium"
+      } ${isNegative ? "text-rose-600 dark:text-rose-400" : "text-lavenderDawn-iris dark:text-lavenderMoon-iris"}`}
     >
       {formattedBalance}
     </span>

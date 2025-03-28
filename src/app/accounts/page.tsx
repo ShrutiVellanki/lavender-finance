@@ -1,8 +1,7 @@
 "use client";
-import type React from "react";
-import { AccountInfo } from "@/components/product/account/account-info/account-info";
-import { useTheme, ThemeProvider } from "@/theme-provider";
+
 import { Layout } from "@/components/layout/layout";
+import { AccountInfo } from "@/components/product/account/account-info/account-info";
 import { Accordion } from "@/components/accordion/accordion";
 import { aggregateBalancesByDate, groupAccountsByType } from "@/utils/utils";
 import NetWorthChart from "@/components/product/net-worth/net-worth";
@@ -13,8 +12,11 @@ import { AccountGroup } from "@/components/product/account/account-group/account
 import { Loading } from "@/components/ui/loading";
 import { Error } from "@/components/ui/error";
 
-const AccountsPage: React.FC = () => {
-  const { theme } = useTheme();
+interface FetchError {
+  message: string;
+}
+
+export default function AccountsPage() {
   const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
   const [totalBalanceByDateArray, setTotalBalanceByDateArray] = useState<NetWorthData[] | null>(null);
   const [loading, setLoading] = useState(true);
@@ -35,9 +37,9 @@ const AccountsPage: React.FC = () => {
       
       setGroupedAccounts(grouped);
       setTotalBalanceByDateArray(totalBalanceByDateArray);
-    } catch (err: any) {
-      const errorMessage = err instanceof Error ? err.message : "Failed to fetch data";
-      setError(errorMessage);
+    } catch (err) {
+      const error = err as FetchError | Error;
+      setError(error.message || "Failed to fetch data");
     } finally {
       setLoading(false);
     }
@@ -56,9 +58,9 @@ const AccountsPage: React.FC = () => {
   }
 
   return (
-    <div data-theme={theme}>
-      <Layout>
-        <div className="space-y-8">
+    <Layout>
+      <div className="md:p-0 p-6 overflow-x-auto">
+        <div className="space-y-8 min-w-[768px]">
           <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray || []} />
           <div className="space-y-4">
             {groupedAccounts && Object.entries(groupedAccounts).map(([type, accounts]) => (
@@ -80,15 +82,7 @@ const AccountsPage: React.FC = () => {
             ))}
           </div>
         </div>
-      </Layout>
-    </div>
-  );
-};
-
-export default function App() {
-  return (
-    <ThemeProvider>
-      <AccountsPage />
-    </ThemeProvider>
+      </div>
+    </Layout>
   );
 } 
