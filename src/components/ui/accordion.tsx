@@ -1,7 +1,7 @@
+import { ChevronDownIcon } from "lucide-react";
 import React, { useState } from "react";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
-export const Accordion: React.FC = ({ children }) => {
+export const Accordion: React.FC = ({ children }: any) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -20,4 +20,4 @@ export const Accordion: React.FC = ({ children }) => {
       {isOpen && <div className="p-4">{children}</div>}
     </div>
   );
-}; 
+};
