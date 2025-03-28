@@ -201,7 +201,7 @@ export default function Dashboard() {
             <h2 className="text-lg font-medium text-lavenderDawn-text dark:text-lavenderMoon-text mb-4">Overview</h2>
             <div className="space-y-2">
               {/* Net Worth */}
-              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30">
+              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <PiggyBank className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
@@ -231,7 +231,7 @@ export default function Dashboard() {
               </div>
 
               {/* Total Assets */}
-              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30">
+              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <Wallet className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
@@ -253,7 +253,7 @@ export default function Dashboard() {
               </div>
 
               {/* Total Liabilities */}
-              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30">
+              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <CreditCard className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
@@ -263,7 +263,7 @@ export default function Dashboard() {
                           Total Liabilities
                         </h3>
                         <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          The total amount of all your debts, including loans, mortgages, and credit cards
+                          The total amount you owe, including credit cards, loans, and mortgages
                         </p>
                       </div>
                       <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">
@@ -275,7 +275,7 @@ export default function Dashboard() {
               </div>
 
               {/* Account Types */}
-              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30">
+              <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <LineChart className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
@@ -285,7 +285,7 @@ export default function Dashboard() {
                           Account Types
                         </h3>
                         <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          The number of different account categories in your portfolio
+                          The different types of accounts you have added to track your finances
                         </p>
                       </div>
                       <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">

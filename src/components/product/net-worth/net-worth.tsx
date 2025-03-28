@@ -4,7 +4,7 @@ import { ChartConfig } from "@/components/chart/config";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useTheme } from "@/theme-provider";
 import { formatCurrency } from "@/lib/utils";
-import { Info, ChevronDown } from "lucide-react";
+import { Info, ChevronDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 const TIME_RANGES = [
   { label: "1 month", value: "1m" },
@@ -109,23 +109,18 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
       })}`;
 
       return (
-        <div className="bg-lavenderDawn-base dark:bg-lavenderMoon-base p-4 rounded-lg border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow shadow-lg min-w-[320px]">
+        <div className="bg-lavenderDawn-base dark:bg-lavenderMoon-base p-4 rounded-lg border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow shadow-lg min-w-[280px]">
           <div className="text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 text-xs mb-2">{dateRange}</div>
           <div className="h-px bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow mb-2"></div>
           <div className="space-y-1.5">
-            <div className="flex justify-between items-center">
-              <span className="text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 text-sm">Net worth</span>
-              <span className="text-lavenderDawn-text dark:text-lavenderMoon-text font-semibold">
+            <div className="flex items-center justify-between">
+              <span className="text-lavenderDawn-text dark:text-lavenderMoon-text text-sm font-medium">
                 {formatCurrency(currentValue)}
               </span>
-            </div>
-            <div className="flex justify-end items-center gap-1.5">
-              <span className={`${change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'} text-xs font-medium`}>
-                {formatCurrency(Math.abs(change))}
-              </span>
-              <span className={`${change >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'} text-xs font-medium`}>
-                ({changePercentage.toFixed(2)}%)
-              </span>
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 text-lavenderDawn-iris dark:text-lavenderMoon-iris">
+                {change >= 0 ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
+                <span className="text-xs font-medium">{formatCurrency(Math.abs(change))} ({changePercentage.toFixed(2)}%)</span>
+              </div>
             </div>
           </div>
         </div>
