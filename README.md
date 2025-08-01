@@ -30,17 +30,14 @@ It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/).
 - **Language**: TypeScript  
 
 
-
-## 🚀 Getting Started
-
-### ✅ Prerequisites
+## ✅ Prerequisites
 
 - Node.js 18.x or later  
 - npm or yarn  
 
 
 
-### 📦 Installation
+## 📦 Installation
 
 1. **Clone the repository:**
 
