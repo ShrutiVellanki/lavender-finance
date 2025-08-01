@@ -3,7 +3,7 @@
 
 **[Lavender Finance](https://lavender-finance.vercel.app/)** is a frontend prototype for tracking and visualizing net worth across different account types. 
 
-It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/)
+It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/).
 
 
 ## ✨ Features
