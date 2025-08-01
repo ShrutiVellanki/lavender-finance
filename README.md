@@ -8,18 +8,17 @@ It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/).
 
 ## ✨ Features
 
-
-<img width="2940" height="1658" alt="image" src="https://github.com/user-attachments/assets/f992c95a-8aeb-43b6-9846-e5dd6428870a" />
-
-
 - Interactive chart with historical balance trends  
 - Grouping by Account Type (credit, investment, etc.)  
 - Light/Dark Theme Toggle
 - Privacy-focused account display (masked numbers)
 - Responsive Design for All Screens
 - Clean, modern UI  
-
-
+<p align="center" style="border: 1px solid black;">
+<img width="800" alt="image" style="border: 1px solid #dedede;" src="https://github.com/user-attachments/assets/f992c95a-8aeb-43b6-9846-e5dd6428870a" />
+</br>
+<em>Net worth dashboard with grouped account types</em>
+</p>
 
 ## 🛠 Tech Stack
 
@@ -34,7 +33,6 @@ It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/).
 
 - Node.js 18.x or later  
 - npm or yarn  
-
 
 
 ## 📦 Installation
