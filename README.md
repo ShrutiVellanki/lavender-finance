@@ -14,7 +14,7 @@ It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/)
 - Privacy-focused account display (masked numbers)  
 - Clean, modern UI  
 
----
+
 
 ## 🛠 Tech Stack
 
@@ -39,9 +39,10 @@ It’s inspired by tools like [Monarch Money](https://www.monarchmoney.com/)
 
 1. **Clone the repository:**
 
-   ```bash
-   git clone https://github.com/yourusername/net-worth-display.git
-   cd net-worth-display
+```bash
+git clone https://github.com/yourusername/net-worth-display.git
+cd net-worth-display
+```
 
 2. **Install Dependencies**
 
