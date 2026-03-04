@@ -15,7 +15,8 @@ import {
   Moon,
   ChevronLeft,
   ChevronRight,
-  Calculator
+  Calculator,
+  CreditCard
 } from 'lucide-react';
 import { useTheme } from '@/theme-provider';
 
@@ -33,6 +34,7 @@ interface SidebarProps {
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Accounts', href: '/accounts', icon: Layers },
+  { name: 'Cards', href: '/cards', icon: CreditCard },
 ];
 
 export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
