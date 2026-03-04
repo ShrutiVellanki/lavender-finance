@@ -16,7 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Calculator,
-  CreditCard
+  CreditCard,
+  ShieldCheck
 } from 'lucide-react';
 import { useTheme } from '@/theme-provider';
 
@@ -35,6 +36,7 @@ const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Accounts', href: '/accounts', icon: Layers },
   { name: 'Cards', href: '/cards', icon: CreditCard },
+  { name: 'Verification', href: '/otp', icon: ShieldCheck },
 ];
 
 export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
