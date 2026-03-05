@@ -17,7 +17,8 @@ import {
   ChevronRight,
   Calculator,
   CreditCard,
-  ShieldCheck
+  ShieldCheck,
+  Wallet
 } from 'lucide-react';
 import { useTheme } from '@/theme-provider';
 
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Accounts', href: '/accounts', icon: Layers },
   { name: 'Cards', href: '/cards', icon: CreditCard },
+  { name: 'Wallet', href: '/wallet', icon: Wallet },
   { name: 'Verification', href: '/otp', icon: ShieldCheck },
 ];
 
