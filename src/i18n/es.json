@@ -12,7 +12,8 @@
     "clearFilter": "Limpiar filtro",
     "confirm": "Confirmar",
     "saved": "Guardado",
-    "personal": "Personal"
+    "personal": "Personal",
+    "comingSoon": "Próximamente"
   },
   "nav": {
     "dashboard": "Panel",
@@ -44,6 +45,7 @@
   },
   "accounts": {
     "title": "Cuentas",
+    "subtitle": "Ver saldos y rendimiento en todas tus cuentas.",
     "accountCount": "{{count}} cuentas",
     "filterByType": "Filtrar por tipo",
     "allTypes": "Todos los tipos de cuenta...",
@@ -54,6 +56,7 @@
   },
   "transactions": {
     "title": "Transacciones",
+    "subtitle": "Revisa y filtra tu actividad reciente en todas las cuentas.",
     "totalIncome": "Ingresos Totales",
     "totalExpenses": "Gastos Totales",
     "net": "Neto",
@@ -76,6 +79,7 @@
   },
   "budget": {
     "title": "Presupuesto",
+    "subtitle": "Controla tus gastos mensuales contra los límites del presupuesto.",
     "totalBudget": "Presupuesto Total",
     "totalSpent": "Total Gastado",
     "remaining": "Restante",
@@ -86,7 +90,7 @@
     "notRated": "Sin calificar",
     "rated": "Calificado {{rating}}/5",
     "rate": "Calificar",
-    "budgetVsActual": "Presupuesto vs Real",
+    "budgetVsActual": "Resumen de Gastos",
     "rateCategory": "Calificar {{category}}",
     "rateCategoryDesc": "¿Qué tan satisfecho/a estás con tus gastos de {{category}} este mes?",
     "optionalFeedback": "Comentarios opcionales...",
@@ -96,10 +100,16 @@
     "tooltipRemaining": "Monto restante antes de alcanzar tu presupuesto total",
     "chartBudget": "Presupuesto",
     "chartSpent": "Gastado",
-    "futureMonth": "Sin datos de gasto aún"
+    "futureMonth": "Sin datos de gasto aún",
+    "goToEarliest": "Ir al mes más antiguo",
+    "goToPrevious": "Mes anterior",
+    "goToNext": "Mes siguiente",
+    "goToLatest": "Ir al mes más reciente",
+    "today": "Hoy"
   },
   "cards": {
     "title": "Tarjetas",
+    "subtitle": "Administra tus tarjetas de crédito y débito.",
     "yourCards": "Tus Tarjetas",
     "addCard": "Agregar Tarjeta",
     "noCards": "Aún no tienes tarjetas. Agrega tu primera tarjeta para comenzar.",
@@ -133,14 +143,38 @@
   },
   "settings": {
     "title": "Configuración",
+    "subtitle": "Actualiza tu perfil, preferencias y configuración de la app.",
     "fullName": "Nombre Completo",
     "email": "Correo Electrónico",
     "phone": "Número de Teléfono",
     "saveChanges": "Guardar Cambios",
     "saving": "Guardando...",
     "language": "Idioma",
+    "currency": "Moneda",
+    "currencyDesc": "Mostrar montos en tu moneda preferida",
     "failedSave": "Error al guardar configuración",
-    "phoneInvalid": "Ingrese un número de teléfono válido de 10 dígitos"
+    "phoneInvalid": "Ingrese un número de teléfono válido de 10 dígitos",
+    "appearance": "Apariencia",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "developer": "Configuración de Desarrollador",
+    "developerDesc": "Opciones avanzadas para probar con datos personalizados.",
+    "uploadJson": "Cargar Datos JSON",
+    "uploadJsonDesc": "Reemplaza los datos de demostración con tu propio archivo JSON. El archivo será validado antes de aplicarlo.",
+    "chooseFile": "Elegir Archivo",
+    "dragDrop": "o arrastra y suelta",
+    "jsonFormat": "JSON hasta 5MB",
+    "validating": "Validando...",
+    "applyData": "Aplicar Datos",
+    "resetData": "Restablecer Predeterminado",
+    "dataActive": "Datos personalizados activos",
+    "dataApplied": "Datos personalizados aplicados — {{counts}}. Recarga las páginas para ver los cambios.",
+    "validationFailed": "Validación Fallida",
+    "invalidJson": "JSON inválido: {{error}}",
+    "fileTooLarge": "El archivo debe ser menor de 5MB",
+    "expectedFormat": "Formato esperado",
+    "schemaHint": "Proporciona cualquier combinación de: accounts, chart, transactions, budgets, spending"
   },
   "notFound": {
     "title": "Página no encontrada",

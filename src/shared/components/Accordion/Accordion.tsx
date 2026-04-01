@@ -167,7 +167,7 @@ export function AccordionTrigger({ children, className }: AccordionTriggerProps)
         onKeyDown={handleKeyDown}
         className={cn(
           "w-full text-left py-3 px-4 bg-transparent border-none cursor-pointer text-[13px] font-semibold tracking-[-0.01em]",
-          "flex justify-between items-center text-foreground hover:bg-accent/50 transition-colors rounded-lg",
+          "flex justify-between items-center gap-3 text-foreground hover:bg-accent/50 transition-colors rounded-lg",
           className,
         )}
       >

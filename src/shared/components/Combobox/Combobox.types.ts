@@ -7,6 +7,7 @@ export type ComboboxProps<T> = {
   onChange?: (value: T | null) => void
   getOptionLabel: (option: T) => string
   renderOption?: (option: T, state: { isHighlighted: boolean; isSelected: boolean }) => React.ReactNode
+  renderValue?: (option: T) => React.ReactNode
   placeholder?: string
   disabled?: boolean
   className?: string

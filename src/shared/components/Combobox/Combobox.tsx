@@ -10,6 +10,7 @@ export function Combobox<T>({
   onChange,
   getOptionLabel,
   renderOption,
+  renderValue,
   placeholder = "Select an option",
   disabled = false,
   className,
@@ -83,6 +84,7 @@ export function Combobox<T>({
   }
 
   const displayValue = isOpen ? query : selectedValue ? getOptionLabel(selectedValue) : ""
+  const showOverlay = !isOpen && selectedValue && renderValue
 
   return (
     <div ref={rootRef} className={cn("relative w-[280px]", className)}>
@@ -101,8 +103,19 @@ export function Combobox<T>({
           onFocus={() => setIsOpen(true)}
           onChange={(e) => { setQuery(e.target.value); setIsOpen(true); setHighlightedIndex(0) }}
           onKeyDown={handleKeyDown}
-          className="w-full h-9 pl-3 pr-8 text-[13px] rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 ring-offset-background transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className={cn(
+            "w-full h-9 pl-3 pr-8 text-[13px] rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 ring-offset-background transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+            showOverlay && "text-transparent",
+          )}
         />
+        {showOverlay && (
+          <div
+            className="absolute inset-0 flex items-center pl-3 pr-8 text-[13px] text-foreground pointer-events-none"
+            aria-hidden
+          >
+            {renderValue(selectedValue)}
+          </div>
+        )}
         <ChevronDown className={cn("absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground pointer-events-none transition-transform", isOpen && "rotate-180")} />
       </div>
 

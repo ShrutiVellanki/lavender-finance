@@ -1,33 +1,44 @@
 import { Layout } from "@/app/layout/layout";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/shared/components/Accordion";
-import { aggregateBalancesByDate, groupAccountsByType, accountTypes, formatCurrency } from "@/shared/utils";
+import { aggregateBalancesByDate, groupAccountsByType, accountTypes } from "@/shared/utils";
+import { useCurrency } from "@/shared/context/currency";
 import NetWorthChart from "@/features/dashboard/components/net-worth/net-worth";
 import { fetchAccountData, fetchChartData } from "@/services/api";
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Account, NetWorthData } from "@/types";
+import { Account, NetWorthData, ChartData } from "@/types";
 import { Loading } from "@/shared/components/Loading";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Card } from "@/shared/components/Card";
 import { Combobox } from "@/shared/components/Combobox";
 import { VirtualizedList } from "@/shared/components/VirtualizedList";
 import { Badge } from "@/shared/components/Badge";
-import { Layers, CreditCard, Banknote as Bank, Car, Coins, House, DollarSign } from "lucide-react";
+import { CreditCard, Banknote as Bank, Car, Coins, House, DollarSign, Landmark, TrendingUp, MoreHorizontal } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { accountTypeLabels, accountSubtypeLabels } from "@/shared/constants/account-constants";
 
 interface FetchError { message: string }
 
-const ACCOUNT_GROUP_ICONS: Record<string, React.ReactNode> = {
-  credit: <CreditCard className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-  real_estate: <House className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-  depository: <Bank className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-  vehicle: <Car className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-  brokerage: <Coins className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-  loan: <DollarSign className="w-5 h-5 text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]" />,
-};
+const iconCls = (size: string) => `${size} text-lavenderDawn-iris/90 dark:text-lavenderMoon-iris/90 stroke-[1.5]`
+
+const ACCOUNT_TYPE_ICONS: Record<string, (cls: string) => React.ReactNode> = {
+  credit: (c) => <CreditCard className={c} />,
+  depository: (c) => <Bank className={c} />,
+  real_estate: (c) => <House className={c} />,
+  vehicle: (c) => <Car className={c} />,
+  brokerage: (c) => <Coins className={c} />,
+  investment: (c) => <TrendingUp className={c} />,
+  loan: (c) => <DollarSign className={c} />,
+  mortgage: (c) => <Landmark className={c} />,
+  other: (c) => <MoreHorizontal className={c} />,
+}
+
+const ACCOUNT_GROUP_ICONS: Record<string, React.ReactNode> = Object.fromEntries(
+  Object.entries(ACCOUNT_TYPE_ICONS).map(([k, fn]) => [k, fn(iconCls("w-5 h-5"))])
+)
 
 function CurrencyValue({ amount, bold = false }: { amount: number; bold?: boolean }) {
+  const { formatCurrency } = useCurrency();
   return (
     <span
       className={`text-sm sm:text-base tracking-tight tabular-nums shrink-0 ${bold ? "font-semibold" : "font-medium"} ${
@@ -41,8 +52,9 @@ function CurrencyValue({ amount, bold = false }: { amount: number; bold?: boolea
 
 export default function AccountsPage() {
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
-  const [totalBalanceByDateArray, setTotalBalanceByDateArray] = useState<NetWorthData[] | null>(null);
+  const [rawChartData, setRawChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
@@ -53,7 +65,7 @@ export default function AccountsPage() {
       setError(null);
       const [accountData, chartData] = await Promise.all([fetchAccountData(), fetchChartData()]);
       setGroupedAccounts(groupAccountsByType(accountData));
-      setTotalBalanceByDateArray(aggregateBalancesByDate(chartData));
+      setRawChartData(chartData);
     } catch (err) {
       setError((err as FetchError).message || "Failed to fetch data");
     } finally {
@@ -83,6 +95,19 @@ export default function AccountsPage() {
     return entries.filter(([type]) => type === typeFilter);
   }, [groupedAccounts, typeFilter]);
 
+  const chartBalanceArray = useMemo<NetWorthData[]>(() => {
+    if (!rawChartData) return [];
+    if (!typeFilter || !groupedAccounts) return aggregateBalancesByDate(rawChartData);
+    const accountIdsForType = new Set(
+      (groupedAccounts[typeFilter] ?? []).map((a) => a.id),
+    );
+    const filtered: ChartData = {};
+    for (const [id, points] of Object.entries(rawChartData)) {
+      if (accountIdsForType.has(id)) filtered[id] = points;
+    }
+    return aggregateBalancesByDate(filtered);
+  }, [rawChartData, typeFilter, groupedAccounts]);
+
   if (loading) return <Loading message={t("common.loading")} />;
   if (error) return <ErrorDisplay message={error} onRetry={fetchData} title={t("common.error")} />;
 
@@ -90,10 +115,12 @@ export default function AccountsPage() {
     <Layout>
       <div>
         <div className="space-y-6">
-          <div className="flex items-center gap-3 flex-wrap">
-            <Layers className="w-6 h-6 sm:w-8 sm:h-8 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-            <h1 className="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">{t("accounts.title")}</h1>
-            <Badge variant="default">{t("accounts.accountCount", { count: allAccounts.length })}</Badge>
+          <div>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">{t("accounts.title")}</h1>
+              <Badge variant="default">{t("accounts.accountCount", { count: allAccounts.length })}</Badge>
+            </div>
+            <p className="text-xs sm:text-[13px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-1">{t("accounts.subtitle")}</p>
           </div>
 
           {/* Account Type Filter */}
@@ -107,6 +134,18 @@ export default function AccountsPage() {
                 value={typeFilter ? allTypes.find((t) => t.value === typeFilter) ?? null : null}
                 onChange={(opt) => setTypeFilter(opt?.value ?? null)}
                 getOptionLabel={(o) => o.label}
+                renderOption={(o) => (
+                  <span className="flex items-center gap-2">
+                    {ACCOUNT_TYPE_ICONS[o.value]?.(iconCls("w-4 h-4")) ?? <MoreHorizontal className={iconCls("w-4 h-4")} />}
+                    {o.label}
+                  </span>
+                )}
+                renderValue={(o) => (
+                  <span className="flex items-center gap-2">
+                    {ACCOUNT_TYPE_ICONS[o.value]?.(iconCls("w-4 h-4")) ?? <MoreHorizontal className={iconCls("w-4 h-4")} />}
+                    {o.label}
+                  </span>
+                )}
                 placeholder={t("accounts.allTypes")}
                 className="w-full sm:w-60"
               />
@@ -123,7 +162,7 @@ export default function AccountsPage() {
 
           {/* Net Worth Chart */}
           <Card className="p-4 sm:p-6">
-            <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray || []} />
+            <NetWorthChart totalBalanceByDateArray={chartBalanceArray} />
           </Card>
 
           {/* Grouped Accounts */}

@@ -8,7 +8,7 @@ import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
-import { formatCurrency } from "@/shared/utils";
+import { useCurrency } from "@/shared/context/currency";
 import { useTheme } from "@/shared/components/ThemeProvider";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
@@ -22,6 +22,7 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "danger"> = {
 };
 
 export default function AccountDetail() {
+  const { formatCurrency } = useCurrency();
   const { id } = useParams<{ id: string }>();
   const { theme } = useTheme();
   const isDark = theme === "dark";

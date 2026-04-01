@@ -11,9 +11,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Ca
 import { Modal } from "@/shared/components/Modal";
 import { Select } from "@/shared/components/Dropdown";
 import { Autocomplete } from "@/shared/components/Autocomplete";
-import { formatCurrency } from "@/shared/utils";
+import { useCurrency } from "@/shared/context/currency";
 import { Pagination } from "@/shared/components/Pagination";
-import { ArrowLeftRight, ArrowUpRight, ArrowDownRight, X } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CATEGORY_ICON, STATUS_ICON } from "@/shared/constants/category-icons";
 
@@ -29,8 +29,9 @@ const statusOptions: StatusFilter[] = ["all", ...STATUSES];
 
 export default function Transactions() {
   const { t } = useTranslation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const accountParam = searchParams.get("account");
+  const { formatCurrency } = useCurrency();
+  const [searchParams] = useSearchParams();
+  const initialAccount = searchParams.get("account");
 
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [accounts, setAccounts] = useState<AccountData>({});
@@ -38,6 +39,7 @@ export default function Transactions() {
   const [error, setError] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [accountFilter, setAccountFilter] = useState<string>("all");
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [searchMerchant, setSearchMerchant] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,16 +52,23 @@ export default function Transactions() {
       const [txData, acctData] = await Promise.all([fetchTransactions(), fetchAccountData()]);
       setTransactions(txData);
       setAccounts(acctData);
+      if (initialAccount && acctData[initialAccount]) {
+        setAccountFilter(initialAccount);
+      }
     } catch (err) {
       setError((err as globalThis.Error).message || "Failed to fetch transactions");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [initialAccount]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
   const allMerchants = useMemo(() => [...new Set(transactions.map((t) => t.merchant))], [transactions]);
+
+  const accountOptions = useMemo(() => {
+    return ["all", ...Object.keys(accounts)];
+  }, [accounts]);
 
   const fetchMerchantSuggestions = useCallback(
     async (query: string) => allMerchants.filter((m) => m.toLowerCase().includes(query.toLowerCase())),
@@ -68,12 +77,12 @@ export default function Transactions() {
 
   const filtered = useMemo(() => {
     let result = transactions;
-    if (accountParam) result = result.filter((t) => t.accountId === accountParam);
+    if (accountFilter !== "all") result = result.filter((t) => t.accountId === accountFilter);
     if (searchMerchant) result = result.filter((t) => t.merchant === searchMerchant);
     if (categoryFilter !== "all") result = result.filter((t) => t.category === categoryFilter);
     if (statusFilter !== "all") result = result.filter((t) => t.status === statusFilter);
     return result;
-  }, [transactions, accountParam, searchMerchant, categoryFilter, statusFilter]);
+  }, [transactions, accountFilter, searchMerchant, categoryFilter, statusFilter]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginatedTx = useMemo(
@@ -81,7 +90,7 @@ export default function Transactions() {
     [filtered, currentPage],
   );
 
-  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, searchMerchant, accountParam]);
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, searchMerchant, accountFilter]);
 
   const { totalIncome, totalExpenses, net } = useMemo(() => {
     let income = 0, expenses = 0;
@@ -89,11 +98,13 @@ export default function Transactions() {
     return { totalIncome: income, totalExpenses: expenses, net: income - expenses };
   }, [filtered]);
 
-  const accountName = accountParam && accounts[accountParam] ? accounts[accountParam].name : null;
+  const hasActiveFilters = searchMerchant || categoryFilter !== "all" || statusFilter !== "all" || accountFilter !== "all";
 
-  function clearAccountFilter() {
-    searchParams.delete("account");
-    setSearchParams(searchParams);
+  function clearAllFilters() {
+    setSearchMerchant(null);
+    setCategoryFilter("all");
+    setStatusFilter("all");
+    setAccountFilter("all");
   }
 
   if (loading) return <Loading message={t("common.loading")} />;
@@ -102,22 +113,10 @@ export default function Transactions() {
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex items-center gap-3">
-          <ArrowLeftRight className="w-6 h-6 sm:w-8 sm:h-8 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+        <div>
           <h1 className="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">{t("transactions.title")}</h1>
+          <p className="text-xs sm:text-[13px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-1">{t("transactions.subtitle")}</p>
         </div>
-
-        {/* Account filter chip */}
-        {accountName && (
-          <div className="flex items-center gap-2">
-            <Badge variant="default" className="gap-1 pr-1">
-              {t("transactions.filteredBy", { name: accountName })}
-              <button onClick={clearAccountFilter} className="ml-1 p-0.5 rounded hover:bg-lavenderDawn-highlightMed dark:hover:bg-lavenderMoon-highlightMed transition-colors">
-                <X className="w-3 h-3" />
-              </button>
-            </Badge>
-          </div>
-        )}
 
         {/* Summary */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -145,15 +144,30 @@ export default function Transactions() {
               fetchSuggestions={fetchMerchantSuggestions}
               getOptionLabel={(m: string) => m}
               onSelect={(m) => setSearchMerchant(m)}
+              onClear={() => setSearchMerchant(null)}
               placeholder={t("transactions.searchMerchant")}
             />
           </div>
+          <Select
+            options={accountOptions}
+            value={accountFilter}
+            onChange={(v) => setAccountFilter(v)}
+            getOptionLabel={(o) => o === "all" ? "All Accounts" : (accounts[o]?.name ?? o)}
+            label="Account"
+            className="w-full sm:w-44"
+          />
           <Select
             options={categoryOptions}
             value={categoryFilter}
             onChange={(v) => setCategoryFilter(v)}
             getOptionLabel={(o) => o === "all" ? "All Categories" : o}
             renderOption={(o) => (
+              <span className="flex items-center gap-2">
+                {o !== "all" && CATEGORY_ICON[o] && <span className="shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 opacity-60">{CATEGORY_ICON[o]}</span>}
+                {o === "all" ? "All Categories" : o}
+              </span>
+            )}
+            renderValue={(o) => (
               <span className="flex items-center gap-2">
                 {o !== "all" && CATEGORY_ICON[o] && <span className="shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 opacity-60">{CATEGORY_ICON[o]}</span>}
                 {o === "all" ? "All Categories" : o}
@@ -167,11 +181,23 @@ export default function Transactions() {
             value={statusFilter}
             onChange={(v) => setStatusFilter(v)}
             getOptionLabel={(o) => o === "all" ? "All Statuses" : o}
+            renderOption={(o) => (
+              <span className="flex items-center gap-2">
+                {o !== "all" && STATUS_ICON[o] && <span className="shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 opacity-60">{STATUS_ICON[o]}</span>}
+                {o === "all" ? "All Statuses" : o}
+              </span>
+            )}
+            renderValue={(o) => (
+              <span className="flex items-center gap-2">
+                {o !== "all" && STATUS_ICON[o] && <span className="shrink-0 [&>svg]:w-3.5 [&>svg]:h-3.5 opacity-60">{STATUS_ICON[o]}</span>}
+                {o === "all" ? "All Statuses" : o}
+              </span>
+            )}
             label="Status"
             className="w-full sm:w-40"
           />
-          {(searchMerchant || categoryFilter !== "all" || statusFilter !== "all" || accountParam) && (
-            <Button variant="ghost" size="sm" className="self-end" onClick={() => { setSearchMerchant(null); setCategoryFilter("all"); setStatusFilter("all"); clearAccountFilter(); }}>
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" className="self-end" onClick={clearAllFilters}>
               {t("transactions.clearFilters")}
             </Button>
           )}
@@ -180,11 +206,11 @@ export default function Transactions() {
         {/* Table */}
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[600px]">
+            <table className="w-full text-sm min-w-[750px]">
               <thead>
                 <tr className="border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
-                  {["Description", "Category", "Date", "Status", "Amount"].map((h, i) => (
-                    <th key={h} className={`${i === 0 ? "pl-6" : "pl-4"} ${i === 4 ? "pr-6 text-right" : ""} py-3 text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider text-left`}>
+                  {["Description", "Account", "Category", "Date", "Status", "Amount"].map((h, i) => (
+                    <th key={h} className={`${i === 0 ? "pl-6" : "pl-4"} ${i === 5 ? "pr-6 text-right" : ""} py-3 text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider text-left`}>
                       {h}
                     </th>
                   ))}
@@ -192,7 +218,7 @@ export default function Transactions() {
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={5} className="px-6 py-12 text-center text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("transactions.noMatches")}</td></tr>
+                  <tr><td colSpan={6} className="px-6 py-12 text-center text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("transactions.noMatches")}</td></tr>
                 ) : paginatedTx.map((tx) => (
                   <tr
                     key={tx.id}
@@ -203,9 +229,12 @@ export default function Transactions() {
                       <p className="font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{tx.description}</p>
                       <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">{tx.merchant}</p>
                     </td>
+                    <td className="px-4 py-3 text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 text-xs">
+                      {accounts[tx.accountId]?.name ?? tx.accountId}
+                    </td>
                     <td className="px-4 py-3"><Badge variant="default" icon={CATEGORY_ICON[tx.category]}>{tx.category}</Badge></td>
-                    <td className="px-4 py-3 text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70">
-                      {new Date(tx.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                    <td className="px-4 py-3 text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 whitespace-nowrap">
+                      {new Date(tx.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                     </td>
                     <td className="px-4 py-3"><Badge variant={STATUS_VARIANT[tx.status]} icon={STATUS_ICON[tx.status]}>{tx.status}</Badge></td>
                     <td className="px-6 py-3 text-right">

@@ -12,7 +12,8 @@
     "clearFilter": "Clear filter",
     "confirm": "Confirm",
     "saved": "Saved",
-    "personal": "Personal"
+    "personal": "Personal",
+    "comingSoon": "Coming soon"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -44,6 +45,7 @@
   },
   "accounts": {
     "title": "Accounts",
+    "subtitle": "View balances and performance across all your accounts.",
     "accountCount": "{{count}} accounts",
     "filterByType": "Filter by type",
     "allTypes": "All account types...",
@@ -54,6 +56,7 @@
   },
   "transactions": {
     "title": "Transactions",
+    "subtitle": "Review and filter your recent activity across all accounts.",
     "totalIncome": "Total Income",
     "totalExpenses": "Total Expenses",
     "net": "Net",
@@ -76,6 +79,7 @@
   },
   "budget": {
     "title": "Budget",
+    "subtitle": "Track your monthly spending against budget limits.",
     "totalBudget": "Total Budget",
     "totalSpent": "Total Spent",
     "remaining": "Remaining",
@@ -86,7 +90,7 @@
     "notRated": "Not rated",
     "rated": "Rated {{rating}}/5",
     "rate": "Rate",
-    "budgetVsActual": "Budget vs Actual",
+    "budgetVsActual": "Spending Overview",
     "rateCategory": "Rate {{category}}",
     "rateCategoryDesc": "How satisfied are you with your {{category}} spending this month?",
     "optionalFeedback": "Optional feedback...",
@@ -96,10 +100,16 @@
     "tooltipRemaining": "Amount remaining before hitting your total budget limit",
     "chartBudget": "Budget",
     "chartSpent": "Spent",
-    "futureMonth": "No spending data yet"
+    "futureMonth": "No spending data yet",
+    "goToEarliest": "Go to earliest month",
+    "goToPrevious": "Previous month",
+    "goToNext": "Next month",
+    "goToLatest": "Go to latest month",
+    "today": "Today"
   },
   "cards": {
     "title": "Cards",
+    "subtitle": "Manage your credit and debit cards.",
     "yourCards": "Your Cards",
     "addCard": "Add Card",
     "noCards": "No cards yet. Add your first card to get started.",
@@ -133,14 +143,38 @@
   },
   "settings": {
     "title": "Settings",
+    "subtitle": "Update your profile, preferences, and app configuration.",
     "fullName": "Full Name",
     "email": "Email",
     "phone": "Phone Number",
     "saveChanges": "Save Changes",
     "saving": "Saving...",
     "language": "Language",
+    "currency": "Currency",
+    "currencyDesc": "Display amounts in your preferred currency",
     "failedSave": "Failed to save settings",
-    "phoneInvalid": "Enter a valid 10-digit phone number"
+    "phoneInvalid": "Enter a valid 10-digit phone number",
+    "appearance": "Appearance",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "developer": "Developer Settings",
+    "developerDesc": "Advanced options for testing with custom data.",
+    "uploadJson": "Upload JSON Data",
+    "uploadJsonDesc": "Replace the demo data with your own JSON file. The file will be validated before applying.",
+    "chooseFile": "Choose File",
+    "dragDrop": "or drag and drop",
+    "jsonFormat": "JSON up to 5MB",
+    "validating": "Validating...",
+    "applyData": "Apply Data",
+    "resetData": "Reset to Default",
+    "dataActive": "Custom data active",
+    "dataApplied": "Custom data applied — {{counts}}. Reload pages to see changes.",
+    "validationFailed": "Validation Failed",
+    "invalidJson": "Invalid JSON: {{error}}",
+    "fileTooLarge": "File must be under 5MB",
+    "expectedFormat": "Expected format",
+    "schemaHint": "Provide any combination of: accounts, chart, transactions, budgets, spending"
   },
   "notFound": {
     "title": "Page not found",

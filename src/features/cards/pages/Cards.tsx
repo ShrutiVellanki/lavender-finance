@@ -132,9 +132,9 @@ export default function CardsPage() {
         {/* ─── LIST / DONE views ─── */}
         {!isInFlow && (
           <>
-            <div className="flex items-center gap-3">
-              <CreditCard className="w-6 h-6 sm:w-8 sm:h-8 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+            <div>
               <h1 className="text-lg sm:text-xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">{t("cards.title")}</h1>
+              <p className="text-xs sm:text-[13px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-1">{t("cards.subtitle")}</p>
             </div>
 
             {loading && (
@@ -279,7 +279,7 @@ export default function CardsPage() {
 
         {/* ─── ADD CARD FLOW (replaces entire view) ─── */}
         {isInFlow && (
-          <>
+          <div className="max-w-lg mx-auto space-y-6">
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -291,7 +291,7 @@ export default function CardsPage() {
               </button>
             </div>
 
-            <div className="max-w-lg mx-auto space-y-6">
+            <div className="space-y-6">
               <div className="text-center space-y-1">
                 <h1 className="text-xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">{t("cards.addCard")}</h1>
                 <p className="text-sm text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("cards.addFlowSubtitle")}</p>
@@ -362,7 +362,7 @@ export default function CardsPage() {
                 )}
               </Card>
             </div>
-          </>
+          </div>
         )}
 
         {/* Add Card Confirmation Modal */}

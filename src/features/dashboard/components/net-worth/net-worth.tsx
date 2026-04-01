@@ -3,7 +3,7 @@ import { ChartContainer } from "@/shared/components/Chart/chart-container";
 import { ChartConfig } from "@/shared/components/Chart/config";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { useTheme } from "@/shared/components/ThemeProvider";
-import { formatCurrency } from "@/shared/utils";
+import { useCurrency } from "@/shared/context/currency";
 import { Info, ChevronDown, ArrowUpRight, ArrowDownRight } from "lucide-react";
 
 const TIME_RANGES = [
@@ -32,6 +32,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
   totalBalanceByDateArray,
 }) => {
   const { theme } = useTheme();
+  const { formatCurrency } = useCurrency();
   const isDark = theme === "dark";
   const [timeRange, setTimeRange] = useState<TimeRange>("1m");
   const [isTimeRangeOpen, setIsTimeRangeOpen] = useState(false);

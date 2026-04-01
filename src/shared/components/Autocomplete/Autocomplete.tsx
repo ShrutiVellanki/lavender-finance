@@ -7,6 +7,7 @@ export function Autocomplete<T>({
   fetchSuggestions,
   getOptionLabel,
   onSelect,
+  onClear,
   placeholder = "Search...",
   debounceMs = 300,
   minQueryLength = 1,
@@ -22,21 +23,35 @@ export function Autocomplete<T>({
 
   const rootRef = useRef<HTMLDivElement | null>(null)
   const requestIdRef = useRef(0)
+  const selectedRef = useRef(false)
   const listboxId = useId()
 
   const hasResults = options.length > 0
   const showDropdown = isOpen && (loading || hasResults || !!error)
+
+  function clearInput() {
+    setQuery("")
+    setOptions([])
+    setIsOpen(false)
+    setHighlightedIndex(-1)
+    setError("")
+    selectedRef.current = false
+    onClear?.()
+  }
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (!rootRef.current?.contains(e.target as Node)) {
         setIsOpen(false)
         setHighlightedIndex(-1)
+        if (query.trim() && !selectedRef.current) {
+          clearInput()
+        }
       }
     }
     document.addEventListener("mousedown", handleClick)
     return () => document.removeEventListener("mousedown", handleClick)
-  }, [])
+  }, [query]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const trimmed = query.trim()
@@ -76,6 +91,7 @@ export function Autocomplete<T>({
     setIsOpen(false)
     setHighlightedIndex(-1)
     setError("")
+    selectedRef.current = true
     onSelect(option)
   }
 
@@ -120,7 +136,7 @@ export function Autocomplete<T>({
           id={`${listboxId}-input`}
           type="text"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setIsOpen(true) }}
+          onChange={(e) => { setQuery(e.target.value); selectedRef.current = false; setIsOpen(true) }}
           onFocus={() => { if (options.length > 0 || loading || error) setIsOpen(true) }}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}

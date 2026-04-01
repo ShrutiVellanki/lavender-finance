@@ -96,10 +96,13 @@ export interface SpendingSummary {
   amount: number
 }
 
+export type CurrencyCode = "USD" | "EUR" | "GBP" | "CAD" | "AUD" | "JPY" | "INR" | "CHF"
+
 export interface UserSettings {
   name: string
   email: string
   phone: string
+  currency: CurrencyCode
   avatar?: string
 }
 

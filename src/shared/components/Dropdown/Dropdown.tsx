@@ -20,6 +20,7 @@ export function Select<T>({
   disabled = false,
   label,
   renderOption,
+  renderValue,
   className,
 }: SelectProps<T>) {
   const isControlled = value !== undefined
@@ -153,7 +154,11 @@ export function Select<T>({
           !selectedValue && "text-muted-foreground",
         )}
       >
-        <span className="truncate">{selectedLabel}</span>
+        <span className="truncate">
+          {renderValue && selectedIndex >= 0
+            ? renderValue(options[selectedIndex])
+            : selectedLabel}
+        </span>
         <ChevronDown
           className={cn(
             "h-4 w-4 shrink-0 text-muted-foreground transition-transform",

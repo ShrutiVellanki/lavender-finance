@@ -223,33 +223,49 @@ function seededRandom(seed: number) {
   return x - Math.floor(x);
 }
 
-export const transactionData: Transaction[] = Array.from({ length: 50 }, (_, i) => {
-  const seed = i + 42;
-  const merchantKey = merchantKeys[Math.floor(seededRandom(seed) * merchantKeys.length)];
-  const { category, desc } = merchants[merchantKey];
-  const isIncome = category === "Income";
-  const isTransfer = category === "Transfer";
-  const baseAmount = isIncome
-    ? 2500 + seededRandom(seed + 1) * 3000
-    : isTransfer
-      ? 50 + seededRandom(seed + 1) * 450
-      : 5 + seededRandom(seed + 1) * 295;
+function generateTransactions(): Transaction[] {
+  const now = new Date();
+  const currentDayOfMonth = now.getDate();
+  const daysInPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
 
-  const daysAgo = Math.floor(seededRandom(seed + 2) * 60);
-  const txDate = new Date();
-  txDate.setDate(txDate.getDate() - daysAgo);
+  return Array.from({ length: 50 }, (_, i) => {
+    const seed = i + 42;
+    const merchantKey = merchantKeys[Math.floor(seededRandom(seed) * merchantKeys.length)];
+    const { category, desc } = merchants[merchantKey];
+    const isIncome = category === "Income";
+    const isTransfer = category === "Transfer";
+    const baseAmount = isIncome
+      ? 2500 + seededRandom(seed + 1) * 3000
+      : isTransfer
+        ? 50 + seededRandom(seed + 1) * 450
+        : 5 + seededRandom(seed + 1) * 295;
 
-  return {
-    id: `tx-${String(i + 1).padStart(3, "0")}`,
-    accountId: accountIds[Math.floor(seededRandom(seed + 3) * 3)],
-    description: desc,
-    amount: isIncome ? Math.round(baseAmount * 100) / 100 : -Math.round(baseAmount * 100) / 100,
-    date: txDate.toISOString().split("T")[0],
-    category,
-    status: statuses[Math.floor(seededRandom(seed + 4) * statuses.length)],
-    merchant: merchantKey,
-  };
-}).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    let daysAgo: number;
+    if (i < 30) {
+      // First 30 txns fall within the current month (0 to currentDayOfMonth-1 days ago)
+      daysAgo = Math.floor(seededRandom(seed + 2) * Math.max(currentDayOfMonth, 1));
+    } else {
+      // Remaining 20 txns fall in the previous month
+      daysAgo = currentDayOfMonth + Math.floor(seededRandom(seed + 2) * daysInPrevMonth);
+    }
+
+    const txDate = new Date(now);
+    txDate.setDate(now.getDate() - daysAgo);
+
+    return {
+      id: `tx-${String(i + 1).padStart(3, "0")}`,
+      accountId: accountIds[Math.floor(seededRandom(seed + 3) * 3)],
+      description: desc,
+      amount: isIncome ? Math.round(baseAmount * 100) / 100 : -Math.round(baseAmount * 100) / 100,
+      date: txDate.toISOString().split("T")[0],
+      category,
+      status: statuses[Math.floor(seededRandom(seed + 4) * statuses.length)],
+      merchant: merchantKey,
+    };
+  }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+}
+
+export const transactionData: Transaction[] = generateTransactions();
 
 // ──────────────────────────── Budgets ────────────────────────────
 
@@ -262,6 +278,17 @@ const budgetLimits: { category: BudgetCategory["category"]; limit: number }[] = 
   { category: "Entertainment", limit: 150 },
 ];
 
+function spentByCategory(month: number, year: number): Record<string, number> {
+  const totals: Record<string, number> = {};
+  for (const tx of transactionData) {
+    const d = new Date(tx.date);
+    if (d.getMonth() === month && d.getFullYear() === year && tx.amount < 0 && tx.category !== "Transfer") {
+      totals[tx.category] = (totals[tx.category] ?? 0) + Math.abs(tx.amount);
+    }
+  }
+  return totals;
+}
+
 function generateMonthlyBudgets(): Record<string, BudgetCategory[]> {
   const result: Record<string, BudgetCategory[]> = {};
   const now = new Date();
@@ -273,12 +300,23 @@ function generateMonthlyBudgets(): Record<string, BudgetCategory[]> {
 
   for (let y = startYear; y <= currentYear; y++) {
     const mStart = y === startYear ? startMonth : 0;
-    const mEnd = y === currentYear ? 11 : 11;
+    const mEnd = 11;
     for (let m = mStart; m <= mEnd; m++) {
       const key = `${y}-${m}`;
       const isFuture = y > currentYear || (y === currentYear && m > currentMonth);
+
+      if (isFuture) {
+        result[key] = budgetLimits.map(({ category, limit }) => ({ category, limit, spent: 0 }));
+        continue;
+      }
+
+      const txSpent = spentByCategory(m, y);
+      const hasTxData = Object.keys(txSpent).length > 0;
+
       result[key] = budgetLimits.map(({ category, limit }) => {
-        if (isFuture) return { category, limit, spent: 0 };
+        if (hasTxData) {
+          return { category, limit, spent: Math.round((txSpent[category] ?? 0) * 100) / 100 };
+        }
         const seed = y * 1200 + m * 100 + limit;
         const ratio = 0.55 + seededRandom(seed) * 0.5;
         return { category, limit, spent: Math.round(limit * ratio) };
@@ -293,10 +331,14 @@ export const budgetData: BudgetCategory[] = budgetsByMonth[`${new Date().getFull
 
 // ──────────────────────── Spending Summary ────────────────────────
 
-export const spendingSummary: SpendingSummary[] = budgetData.map(b => ({
-  category: b.category,
-  amount: b.spent,
-}));
+export const spendingSummary: SpendingSummary[] = (() => {
+  const now = new Date();
+  const spent = spentByCategory(now.getMonth(), now.getFullYear());
+  return budgetLimits.map(({ category }) => ({
+    category,
+    amount: Math.round((spent[category] ?? 0) * 100) / 100,
+  }));
+})();
 
 // ──────────────────────── User Settings ────────────────────────
 
@@ -304,4 +346,5 @@ export const userSettings: UserSettings = {
   name: "Shruti Vellanki",
   email: "shruti@lavenderfinance.com",
   phone: "+1 (555) 867-4832",
+  currency: "USD",
 };

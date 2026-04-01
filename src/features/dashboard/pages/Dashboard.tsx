@@ -15,8 +15,7 @@ import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Card";
 import { Tabs, TabsList, TabsTrigger, TabsPanel } from "@/shared/components/Tabs";
-import { Tooltip } from "@/shared/components/Tooltip";
-import { formatCurrency } from "@/shared/utils";
+import { useCurrency } from "@/shared/context/currency";
 import { ChartContainer } from "@/shared/components/Chart/chart-container";
 import { ChartConfig } from "@/shared/components/Chart/config";
 import { ChartTooltipContent } from "@/shared/components/Chart/chart-tooltip";
@@ -44,6 +43,7 @@ export default function Dashboard() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
   const { t } = useTranslation();
+  const { formatCurrency } = useCurrency();
   const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
   const [totalBalanceByDateArray, setTotalBalanceByDateArray] = useState<NetWorthData[] | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -126,38 +126,31 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* StatCards with Tooltips */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Tooltip content={t("dashboard.tooltipNetWorth")}>
-              <div>
-                <StatCard
-                  label={t("dashboard.netWorth")}
-                  value={formatCurrency(netWorth)}
-                  trend={{ direction: netWorthChange >= 0 ? "up" : "down", value: t("dashboard.thisMonth", { value: Math.abs(netWorthChange).toFixed(1) }) }}
-                  icon={<TrendingUp className="w-4 h-4" />}
-                />
-              </div>
-            </Tooltip>
-            <Tooltip content={t("dashboard.tooltipAssets")}>
-              <div>
-                <StatCard label={t("dashboard.totalAssets")} value={formatCurrency(totalAssets)} icon={<Wallet className="w-4 h-4" />} />
-              </div>
-            </Tooltip>
-            <Tooltip content={t("dashboard.tooltipLiabilities")}>
-              <div>
-                <StatCard label={t("dashboard.liabilities")} value={formatCurrency(totalLiabilities)} icon={<CreditCard className="w-4 h-4" />} />
-              </div>
-            </Tooltip>
-            <Tooltip content={t("dashboard.tooltipSpending")}>
-              <div>
-                <StatCard
-                  label={t("dashboard.monthlySpending")}
-                  value={formatCurrency(monthlySpending)}
-                  trend={{ direction: "down", value: t("dashboard.categories", { count: budgets.length }) }}
-                  icon={<ShoppingCart className="w-4 h-4" />}
-                />
-              </div>
-            </Tooltip>
+            <div className="h-full">
+              <StatCard
+                label={t("dashboard.netWorth")}
+                value={formatCurrency(netWorth)}
+                description={t("dashboard.tooltipNetWorth")}
+                trend={{ direction: netWorthChange >= 0 ? "up" : "down", value: t("dashboard.thisMonth", { value: Math.abs(netWorthChange).toFixed(1) }) }}
+                icon={<TrendingUp className="w-4 h-4" />}
+              />
+            </div>
+            <div className="h-full">
+              <StatCard label={t("dashboard.totalAssets")} value={formatCurrency(totalAssets)} description={t("dashboard.tooltipAssets")} icon={<Wallet className="w-4 h-4" />} />
+            </div>
+            <div className="h-full">
+              <StatCard label={t("dashboard.liabilities")} value={formatCurrency(totalLiabilities)} description={t("dashboard.tooltipLiabilities")} icon={<CreditCard className="w-4 h-4" />} />
+            </div>
+            <div className="h-full">
+              <StatCard
+                label={t("dashboard.monthlySpending")}
+                value={formatCurrency(monthlySpending)}
+                description={t("dashboard.tooltipSpending")}
+                trend={{ direction: "down", value: t("dashboard.categories", { count: budgets.length }) }}
+                icon={<ShoppingCart className="w-4 h-4" />}
+              />
+            </div>
           </div>
 
           {/* Tabs: Net Worth / Spending */}
@@ -173,13 +166,16 @@ export default function Dashboard() {
                 )}
               </TabsPanel>
               <TabsPanel value="spending" className="p-6">
+                <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted mb-3">
+                  {new Date().toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+                </p>
                 <ChartContainer config={spendingChartConfig} className="h-[280px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={spending} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.5} />
                       <XAxis dataKey="category" tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} />
                       <YAxis tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
-                      <RechartsTooltip content={<ChartTooltipContent />} cursor={{ fill: isDark ? "rgba(196,167,231,0.06)" : "rgba(144,122,169,0.06)" }} />
+                      <RechartsTooltip content={<ChartTooltipContent valueFormatter={(v) => formatCurrency(v)} />} cursor={{ fill: isDark ? "rgba(196,167,231,0.06)" : "rgba(144,122,169,0.06)" }} />
                       <Bar dataKey="amount" fill={barFill} radius={[6, 6, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
