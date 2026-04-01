@@ -20,7 +20,9 @@
     "transactions": "Transactions",
     "budget": "Budget",
     "cards": "Cards",
-    "settings": "Settings"
+    "settings": "Settings",
+    "theme": "Theme",
+    "language": "Language"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -93,7 +95,8 @@
     "tooltipTotalSpent": "How much you've spent so far this month",
     "tooltipRemaining": "Amount remaining before hitting your total budget limit",
     "chartBudget": "Budget",
-    "chartSpent": "Spent"
+    "chartSpent": "Spent",
+    "futureMonth": "No spending data yet"
   },
   "cards": {
     "title": "Cards",
@@ -116,7 +119,17 @@
     "addedSuccess": "Card Added Successfully!",
     "addedDesc": "Your card has been securely added to your account.",
     "viewCards": "View Cards",
-    "addAnother": "Add Another Card"
+    "addAnother": "Add Another Card",
+    "backToCards": "Back to Cards",
+    "addFlowSubtitle": "Complete the steps below to securely add a new card.",
+    "cardHolder": "Card Holder",
+    "cardNumber": "Card Number",
+    "expiry": "Expiry",
+    "network": "Network",
+    "deleteCard": "Delete Card",
+    "deleteTitle": "Delete Card",
+    "deleteDesc": "Are you sure you want to remove the card ending in {{last4}}? This action cannot be undone.",
+    "confirmDelete": "Delete"
   },
   "settings": {
     "title": "Settings",

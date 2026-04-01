@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
+/* Static palette colors — safe to inline (never change at runtime) */
 @theme inline {
   --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
 
-  /* ── Lavender Dawn (light) ── */
   --color-lavenderDawn-base: #fafafc;
   --color-lavenderDawn-surface: #ffffff;
   --color-lavenderDawn-overlay: #f3f2f7;
@@ -21,7 +21,6 @@
   --color-lavenderDawn-highlightMed: #dfdee8;
   --color-lavenderDawn-highlightHigh: #d0cfd9;
 
-  /* ── Lavender Moon (soft dark) ── */
   --color-lavenderMoon-base: #1e1e2e;
   --color-lavenderMoon-surface: #262639;
   --color-lavenderMoon-overlay: #2f2f44;
@@ -38,66 +37,67 @@
   --color-lavenderMoon-highlightMed: #3a3a54;
   --color-lavenderMoon-highlightHigh: #4c4c65;
 
-  /* ── Semantic tokens ── */
-  --color-background: var(--color-lavenderDawn-base);
-  --color-foreground: var(--color-lavenderDawn-text);
-  --color-border: var(--color-lavenderDawn-highlightMed);
-  --color-input: var(--color-lavenderDawn-highlightMed);
-  --color-ring: var(--color-lavenderDawn-iris);
-  --color-primary: var(--color-lavenderDawn-iris);
-  --color-primary-foreground: #ffffff;
-  --color-secondary: var(--color-lavenderDawn-highlightLow);
-  --color-secondary-foreground: var(--color-lavenderDawn-text);
-  --color-destructive: var(--color-lavenderDawn-love);
-  --color-destructive-foreground: #ffffff;
-  --color-muted: var(--color-lavenderDawn-highlightLow);
-  --color-muted-foreground: var(--color-lavenderDawn-muted);
-  --color-accent: var(--color-lavenderDawn-highlightLow);
-  --color-accent-foreground: var(--color-lavenderDawn-text);
-  --color-popover: var(--color-lavenderDawn-surface);
-  --color-popover-foreground: var(--color-lavenderDawn-text);
-  --color-card: var(--color-lavenderDawn-surface);
-  --color-card-foreground: var(--color-lavenderDawn-text);
-
-  --color-chart-1: var(--color-lavenderDawn-iris);
-  --color-chart-2: var(--color-lavenderDawn-foam);
-  --color-chart-3: var(--color-lavenderDawn-pine);
-  --color-chart-4: var(--color-lavenderDawn-gold);
-  --color-chart-5: var(--color-lavenderDawn-rose);
-
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
 }
 
+/* Semantic tokens — output as CSS custom properties so dark mode can override */
+@theme {
+  --color-background: #fafafc;
+  --color-foreground: #575279;
+  --color-border: #dfdee8;
+  --color-input: #dfdee8;
+  --color-ring: #907aa9;
+  --color-primary: #907aa9;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #efeef5;
+  --color-secondary-foreground: #575279;
+  --color-destructive: #b4637a;
+  --color-destructive-foreground: #ffffff;
+  --color-muted: #efeef5;
+  --color-muted-foreground: #9893a5;
+  --color-accent: #efeef5;
+  --color-accent-foreground: #575279;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #575279;
+  --color-card: #ffffff;
+  --color-card-foreground: #575279;
+  --color-chart-1: #907aa9;
+  --color-chart-2: #56949f;
+  --color-chart-3: #286983;
+  --color-chart-4: #ea9d34;
+  --color-chart-5: #d7827e;
+}
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 [data-theme="dark"] {
-  --color-background: var(--color-lavenderMoon-base);
-  --color-foreground: var(--color-lavenderMoon-text);
-  --color-border: var(--color-lavenderMoon-highlightMed);
-  --color-input: var(--color-lavenderMoon-highlightMed);
-  --color-ring: var(--color-lavenderMoon-iris);
-  --color-primary: var(--color-lavenderMoon-iris);
-  --color-primary-foreground: var(--color-lavenderMoon-base);
-  --color-secondary: var(--color-lavenderMoon-highlightLow);
-  --color-secondary-foreground: var(--color-lavenderMoon-text);
-  --color-destructive: var(--color-lavenderMoon-love);
-  --color-destructive-foreground: var(--color-lavenderMoon-text);
-  --color-muted: var(--color-lavenderMoon-highlightLow);
-  --color-muted-foreground: var(--color-lavenderMoon-muted);
-  --color-accent: var(--color-lavenderMoon-highlightLow);
-  --color-accent-foreground: var(--color-lavenderMoon-text);
-  --color-popover: var(--color-lavenderMoon-surface);
-  --color-popover-foreground: var(--color-lavenderMoon-text);
-  --color-card: var(--color-lavenderMoon-surface);
-  --color-card-foreground: var(--color-lavenderMoon-text);
-  --color-chart-1: var(--color-lavenderMoon-iris);
-  --color-chart-2: var(--color-lavenderMoon-foam);
-  --color-chart-3: var(--color-lavenderMoon-pine);
-  --color-chart-4: var(--color-lavenderMoon-gold);
-  --color-chart-5: var(--color-lavenderMoon-rose);
+  --color-background: #1e1e2e;
+  --color-foreground: #cdcce0;
+  --color-border: #3a3a54;
+  --color-input: #3a3a54;
+  --color-ring: #af9ad2;
+  --color-primary: #af9ad2;
+  --color-primary-foreground: #1e1e2e;
+  --color-secondary: #282842;
+  --color-secondary-foreground: #cdcce0;
+  --color-destructive: #d4708a;
+  --color-destructive-foreground: #cdcce0;
+  --color-muted: #282842;
+  --color-muted-foreground: #6e6c88;
+  --color-accent: #282842;
+  --color-accent-foreground: #cdcce0;
+  --color-popover: #262639;
+  --color-popover-foreground: #cdcce0;
+  --color-card: #262639;
+  --color-card-foreground: #cdcce0;
+  --color-chart-1: #af9ad2;
+  --color-chart-2: #89bcc6;
+  --color-chart-3: #3a84a4;
+  --color-chart-4: #d9ae6e;
+  --color-chart-5: #d29290;
 }
 
 @layer base {}

@@ -20,7 +20,9 @@
     "transactions": "Transacciones",
     "budget": "Presupuesto",
     "cards": "Tarjetas",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "theme": "Tema",
+    "language": "Idioma"
   },
   "dashboard": {
     "title": "Panel",
@@ -93,7 +95,8 @@
     "tooltipTotalSpent": "Cuánto has gastado este mes",
     "tooltipRemaining": "Monto restante antes de alcanzar tu presupuesto total",
     "chartBudget": "Presupuesto",
-    "chartSpent": "Gastado"
+    "chartSpent": "Gastado",
+    "futureMonth": "Sin datos de gasto aún"
   },
   "cards": {
     "title": "Tarjetas",
@@ -116,7 +119,17 @@
     "addedSuccess": "¡Tarjeta Agregada Exitosamente!",
     "addedDesc": "Tu tarjeta ha sido agregada de forma segura a tu cuenta.",
     "viewCards": "Ver Tarjetas",
-    "addAnother": "Agregar Otra Tarjeta"
+    "addAnother": "Agregar Otra Tarjeta",
+    "backToCards": "Volver a Tarjetas",
+    "addFlowSubtitle": "Completa los pasos a continuación para agregar una tarjeta de forma segura.",
+    "cardHolder": "Titular",
+    "cardNumber": "Número de Tarjeta",
+    "expiry": "Vencimiento",
+    "network": "Red",
+    "deleteCard": "Eliminar Tarjeta",
+    "deleteTitle": "Eliminar Tarjeta",
+    "deleteDesc": "¿Estás seguro/a de que deseas eliminar la tarjeta terminada en {{last4}}? Esta acción no se puede deshacer.",
+    "confirmDelete": "Eliminar"
   },
   "settings": {
     "title": "Configuración",
