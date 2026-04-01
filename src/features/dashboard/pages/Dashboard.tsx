@@ -13,7 +13,6 @@ import { StatCard } from "@/shared/components/StatCard";
 import { ProgressBar } from "@/shared/components/ProgressBar";
 import { Badge } from "@/shared/components/Badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Card";
-import { Tabs, TabsList, TabsTrigger, TabsPanel } from "@/shared/components/Tabs";
 import { useCurrency } from "@/shared/context/currency";
 import { ChartContainer } from "@/shared/components/Chart/chart-container";
 import { ChartConfig } from "@/shared/components/Chart/config";
@@ -22,7 +21,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
 } from "recharts";
 import {
-  PiggyBank, Wallet, CreditCard, ShoppingCart, TrendingUp, Receipt, Info,
+  Wallet, CreditCard, ShoppingCart, Receipt, Info,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -92,17 +91,6 @@ export default function Dashboard() {
     return { totalAssets: assets, totalLiabilities: liabilities };
   }, [groupedAccounts]);
 
-  const netWorth = totalBalanceByDateArray?.length
-    ? totalBalanceByDateArray[totalBalanceByDateArray.length - 1].balance
-    : totalAssets - totalLiabilities;
-
-  const netWorthChange = useMemo(() => {
-    if (!totalBalanceByDateArray || totalBalanceByDateArray.length < 30) return 0;
-    const recent = totalBalanceByDateArray[totalBalanceByDateArray.length - 1].balance;
-    const prev = totalBalanceByDateArray[totalBalanceByDateArray.length - 30].balance;
-    return prev !== 0 ? ((recent - prev) / Math.abs(prev)) * 100 : 0;
-  }, [totalBalanceByDateArray]);
-
   const monthlySpending = useMemo(() => spending.reduce((s, c) => s + c.amount, 0), [spending]);
 
   if (loading) return <Loading message={t("common.loading")} />;
@@ -125,16 +113,20 @@ export default function Dashboard() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="h-full">
-              <StatCard
-                label={t("dashboard.netWorth")}
-                value={formatCurrency(netWorth)}
-                description={t("dashboard.tooltipNetWorth")}
-                trend={{ direction: netWorthChange >= 0 ? "up" : "down", value: t("dashboard.thisMonth", { value: Math.abs(netWorthChange).toFixed(1) }) }}
-                icon={<TrendingUp className="w-4 h-4" />}
-              />
-            </div>
+          {/* Net Worth Chart */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("dashboard.netWorthTab")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {totalBalanceByDateArray && (
+                <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray} />
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="h-full">
               <StatCard label={t("dashboard.totalAssets")} value={formatCurrency(totalAssets)} description={t("dashboard.tooltipAssets")} icon={<Wallet className="w-4 h-4" />} />
             </div>
@@ -152,37 +144,27 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Tabs: Net Worth / Spending */}
+          {/* Spending by Category */}
           <Card>
-            <Tabs defaultValue="networth">
-              <div className="px-6 pt-5">
-                <TabsList>
-                  <TabsTrigger value="networth">{t("dashboard.netWorthTab")}</TabsTrigger>
-                  <TabsTrigger value="spending">{t("dashboard.spendingTab")}</TabsTrigger>
-                </TabsList>
-              </div>
-              <TabsPanel value="networth" className="p-6">
-                {totalBalanceByDateArray && (
-                  <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray} />
-                )}
-              </TabsPanel>
-              <TabsPanel value="spending" className="p-6">
-                <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted mb-3">
-                  {t("dashboard.last30Days")}
-                </p>
-                <ChartContainer config={spendingChartConfig} className="h-[280px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={spending} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.5} />
-                      <XAxis dataKey="category" tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} />
-                      <YAxis tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
-                      <RechartsTooltip content={<ChartTooltipContent valueFormatter={(v) => formatCurrency(v)} />} cursor={{ fill: isDark ? "rgba(196,167,231,0.06)" : "rgba(144,122,169,0.06)" }} />
-                      <Bar dataKey="amount" fill={barFill} radius={[6, 6, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </TabsPanel>
-            </Tabs>
+            <CardHeader>
+              <CardTitle>{t("dashboard.spendingTab")}</CardTitle>
+              <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-1">
+                {t("dashboard.last30Days")}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={spendingChartConfig} className="h-[280px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={spending} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.5} />
+                    <XAxis dataKey="category" tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} />
+                    <YAxis tick={{ fill: isDark ? "#e0def4" : "#575279", fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => `$${v}`} />
+                    <RechartsTooltip content={<ChartTooltipContent valueFormatter={(v) => formatCurrency(v)} />} cursor={{ fill: isDark ? "rgba(196,167,231,0.06)" : "rgba(144,122,169,0.06)" }} />
+                    <Bar dataKey="amount" fill={barFill} radius={[6, 6, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
           </Card>
 
           {/* Bottom Row */}
