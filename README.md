@@ -1,4 +1,4 @@
-# 🐷💰 Lavender Finance
+# Lavender Finance
 
 **[Live Demo](https://lavender-finance.vercel.app)**
 
