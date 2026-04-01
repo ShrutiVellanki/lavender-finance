@@ -50,7 +50,7 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
 
   const [popoverOpen, setPopoverOpen] = useState(false)
   const popoverRef = useRef<HTMLDivElement>(null)
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     return () => { if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current) }
