@@ -1,6 +1,8 @@
 # 🐷💰 Lavender Finance
 
-A personal finance dashboard built with React + TypeScript. Track accounts, transactions, budgets, and cards across a responsive UI with lavender-themed light and dark modes.
+**[Live Demo](https://lavender-finance.vercel.app)**
+
+A personal finance dashboard built with React + TypeScript. Fully responsive & available in Sun and Moon themes.
 
 <p>
   <img src="./docs/screenshots/dashboard-dark.png" alt="Dashboard - Dark Mode" width="720" />
@@ -66,18 +68,8 @@ User profile, language selector, currency display, and developer settings with J
   <img src="./docs/screenshots/settings.png" alt="Settings" width="720" />
 </p>
 
-### Responsive
-
-Collapsed icon sidebar with tooltips on mobile, card-based layouts on small screens.
-
-<p>
-  <img src="./docs/screenshots/mobile.png" alt="Mobile" width="720" />
-</p>
-
-### More
-
-- **Theming** — Lavender Dawn (light) and Lavender Moon (dark) with toggle in sidebar popover; dark mode is default
-- **i18n** — full English and Spanish translations
+### i18n
+Full English and Spanish translations
 
 ## Getting Started
 
