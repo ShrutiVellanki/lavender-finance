@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="8" fill="#575279"/>
-  <path d="M19 5C17.3431 5 16 6.34315 16 8C16 9.65685 17.3431 11 19 11C20.6569 11 22 9.65685 22 8C22 6.34315 20.6569 5 19 5Z" stroke="#F6C177" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M16 8H19C20.6569 8 22 9.34315 22 11V13C22 14.6569 20.6569 16 19 16H16" stroke="#F6C177" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M16 16H19C20.6569 16 22 17.3431 22 19V21C22 22.6569 20.6569 24 19 24H16" stroke="#F6C177" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 8H10C8.34315 8 7 9.34315 7 11V13C7 14.6569 8.34315 16 10 16H13" stroke="#F6C177" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M13 16H10C8.34315 16 7 17.3431 7 19V21C7 22.6569 8.34315 24 10 24H13" stroke="#F6C177" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg> 
+  <!-- Head -->
+  <ellipse cx="16" cy="17" rx="10" ry="9" stroke="#907aa9" stroke-width="2" fill="none"/>
+  <!-- Left ear -->
+  <path d="M8 10 L5 4 L11 7" stroke="#907aa9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Right ear -->
+  <path d="M24 10 L27 4 L21 7" stroke="#907aa9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Snout -->
+  <ellipse cx="16" cy="19" rx="4.5" ry="3" stroke="#907aa9" stroke-width="1.5" fill="none"/>
+  <!-- Left nostril -->
+  <ellipse cx="14" cy="19" rx="1" ry="0.8" fill="#907aa9"/>
+  <!-- Right nostril -->
+  <ellipse cx="18" cy="19" rx="1" ry="0.8" fill="#907aa9"/>
+  <!-- Left eye -->
+  <circle cx="12" cy="14" r="1.2" fill="#907aa9"/>
+  <!-- Right eye -->
+  <circle cx="20" cy="14" r="1.2" fill="#907aa9"/>
+</svg>

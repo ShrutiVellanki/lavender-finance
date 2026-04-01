@@ -1,52 +1,9 @@
-# Lavender Finance
+# 🐷💰 Lavender Finance
 
 A personal finance dashboard built with React + TypeScript. Track accounts, transactions, budgets, and cards across a responsive UI with lavender-themed light and dark modes.
 
-## Screenshots
-
-### Dashboard
-
 <p>
   <img src="./docs/screenshots/dashboard-dark.png" alt="Dashboard - Dark Mode" width="720" />
-</p>
-<p>
-  <img src="./docs/screenshots/dashboard-light.png" alt="Dashboard - Light Mode" width="720" />
-</p>
-
-### Transactions
-
-<p>
-  <img src="./docs/screenshots/transactions.png" alt="Transactions" width="720" />
-</p>
-
-### Budget
-
-<p>
-  <img src="./docs/screenshots/budget.png" alt="Budget" width="720" />
-</p>
-
-### Accounts
-
-<p>
-  <img src="./docs/screenshots/accounts.png" alt="Accounts" width="720" />
-</p>
-
-### Cards
-
-<p>
-  <img src="./docs/screenshots/cards.png" alt="Cards" width="720" />
-</p>
-
-### Mobile
-
-<p>
-  <img src="./docs/screenshots/mobile.png" alt="Mobile" width="720" />
-</p>
-
-### Settings
-
-<p>
-  <img src="./docs/screenshots/settings.png" alt="Settings" width="720" />
 </p>
 
 ## Tech Stack
@@ -61,15 +18,66 @@ A personal finance dashboard built with React + TypeScript. Track accounts, tran
 
 ## Features
 
-- **Dashboard** — net worth chart, spending breakdown, KPI stat cards, and quick-links to transactions and budget
-- **Accounts** — grouped by type (depository, credit, investment, loan) with accordion layout, filterable net worth chart, and per-account detail view with balance history
-- **Transactions** — searchable, filterable table (merchant, account, category, status) with mobile card layout, pagination, and detail modal
-- **Budget** — monthly spending overview with bar charts, navigable month selector, stat cards for total budget / spent / remaining
-- **Cards** — multi-step add-card flow (identity verification, PIN, card details), card detail view with delete, optimistic updates
-- **Settings** — user profile, language selector, currency display, and developer settings with JSON import/export
+### Dashboard
+
+Net worth chart, spending breakdown, KPI stat cards, and quick-links to transactions and budget.
+
+<p>
+  <img src="./docs/screenshots/dashboard-light.png" alt="Dashboard - Light Mode" width="720" />
+</p>
+
+### Transactions
+
+Searchable, filterable table (merchant, account, category, status) with mobile card layout, pagination, and detail modal.
+
+<p>
+  <img src="./docs/screenshots/transactions.png" alt="Transactions" width="720" />
+</p>
+
+### Budget
+
+Monthly spending overview with bar charts, navigable month selector, stat cards for total budget / spent / remaining.
+
+<p>
+  <img src="./docs/screenshots/budget.png" alt="Budget" width="720" />
+</p>
+
+### Accounts
+
+Grouped by type (depository, credit, investment, loan) with accordion layout, filterable net worth chart, and per-account detail view with balance history.
+
+<p>
+  <img src="./docs/screenshots/accounts.png" alt="Accounts" width="720" />
+</p>
+
+### Cards
+
+Multi-step add-card flow (identity verification, PIN, card details), card detail view with delete, optimistic updates.
+
+<p>
+  <img src="./docs/screenshots/cards.png" alt="Cards" width="720" />
+</p>
+
+### Settings
+
+User profile, language selector, currency display, and developer settings with JSON import/export.
+
+<p>
+  <img src="./docs/screenshots/settings.png" alt="Settings" width="720" />
+</p>
+
+### Responsive
+
+Collapsed icon sidebar with tooltips on mobile, card-based layouts on small screens.
+
+<p>
+  <img src="./docs/screenshots/mobile.png" alt="Mobile" width="720" />
+</p>
+
+### More
+
 - **Theming** — Lavender Dawn (light) and Lavender Moon (dark) with toggle in sidebar popover; dark mode is default
 - **i18n** — full English and Spanish translations
-- **Responsive** — collapsed icon sidebar with tooltips on mobile, card-based layouts on small screens
 
 ## Getting Started
 
