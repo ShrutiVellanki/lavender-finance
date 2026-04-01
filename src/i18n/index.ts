@@ -16,7 +16,9 @@ i18n
     interpolation: { escapeValue: false },
     detection: {
       order: ["localStorage", "navigator"],
+      lookupLocalStorage: "lavender-language",
       caches: ["localStorage"],
+      convertDetectedLanguage: (lng: string) => lng.split("-")[0],
     },
   });
 

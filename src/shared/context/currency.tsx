@@ -20,8 +20,19 @@ const LOCALE_MAP: Partial<Record<CurrencyCode, string>> = {
   CHF: "de-CH",
 }
 
+function loadSavedCurrency(): CurrencyCode | null {
+  try {
+    const raw = localStorage.getItem("lavender-settings")
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (parsed?.currency) return parsed.currency as CurrencyCode
+    }
+  } catch { /* noop */ }
+  return null
+}
+
 export function CurrencyProvider({ children, defaultCurrency = "USD" }: { children: ReactNode; defaultCurrency?: CurrencyCode }) {
-  const [currency, setCurrency] = useState<CurrencyCode>(defaultCurrency)
+  const [currency, setCurrency] = useState<CurrencyCode>(() => loadSavedCurrency() ?? defaultCurrency)
 
   const formatCurrency = useCallback(
     (amount: number): string => {

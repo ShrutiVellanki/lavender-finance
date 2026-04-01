@@ -7,7 +7,7 @@ import { Card } from "@/shared/components/Card";
 import { Modal } from "@/shared/components/Modal";
 import { Badge } from "@/shared/components/Badge";
 import { CardEntry, Account } from "@/types";
-import { fetchAccountData, fetchSettings, submitCard } from "@/services/api";
+import { fetchAccountData, fetchSettings, submitCard, getSavedCards, saveCard, removeCard } from "@/services/api";
 import { CreditCard, ShieldCheck, UserCheck, CheckCircle, Loader2, Plus, ArrowLeft, Trash2, Calendar, Hash, User as UserIcon, Wifi } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
@@ -50,7 +50,11 @@ export default function CardsPage() {
       setLoading(true);
       const [acctData, settings] = await Promise.all([fetchAccountData(), fetchSettings()]);
       const creditAccounts = Object.values(acctData).filter((a) => a.type === "credit");
-      setCards(creditAccounts.map(accountToCard));
+      const accountCards = creditAccounts.map(accountToCard);
+      const userCards = getSavedCards();
+      const accountCardIds = new Set(accountCards.map((c) => c.id));
+      const merged = [...accountCards, ...userCards.filter((c) => !accountCardIds.has(c.id))];
+      setCards(merged);
       setPhone(settings.phone);
     } catch {
       // fallback
@@ -120,6 +124,7 @@ export default function CardsPage() {
 
   function deleteCard() {
     if (!selectedCard) return;
+    removeCard(selectedCard.id);
     setCards((prev) => prev.filter((c) => c.id !== selectedCard.id));
     setShowDeleteModal(false);
     setSelectedCard(null);

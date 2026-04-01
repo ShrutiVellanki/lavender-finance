@@ -2,6 +2,53 @@
 
 A personal finance dashboard built with React + TypeScript. Track accounts, transactions, budgets, and cards across a responsive UI with lavender-themed light and dark modes.
 
+## Screenshots
+
+### Dashboard
+
+<p>
+  <img src="./docs/screenshots/dashboard-dark.png" alt="Dashboard - Dark Mode" width="720" />
+</p>
+<p>
+  <img src="./docs/screenshots/dashboard-light.png" alt="Dashboard - Light Mode" width="720" />
+</p>
+
+### Transactions
+
+<p>
+  <img src="./docs/screenshots/transactions.png" alt="Transactions" width="720" />
+</p>
+
+### Budget
+
+<p>
+  <img src="./docs/screenshots/budget.png" alt="Budget" width="720" />
+</p>
+
+### Accounts
+
+<p>
+  <img src="./docs/screenshots/accounts.png" alt="Accounts" width="720" />
+</p>
+
+### Cards
+
+<p>
+  <img src="./docs/screenshots/cards.png" alt="Cards" width="720" />
+</p>
+
+### Mobile
+
+<p>
+  <img src="./docs/screenshots/mobile.png" alt="Mobile" width="720" />
+</p>
+
+### Settings
+
+<p>
+  <img src="./docs/screenshots/settings.png" alt="Settings" width="720" />
+</p>
+
 ## Tech Stack
 
 - **React 19** with TypeScript
@@ -68,7 +115,7 @@ src/
 │   ├── cards/
 │   └── settings/
 ├── shared/
-│   ├── components/         # Reusable UI components (mirrors lavendar-storybook)
+│   ├── components/         # Reusable UI components (mirrors lavender-storybook)
 │   ├── constants/          # Category icons, shared mappings
 │   ├── context/            # CurrencyProvider
 │   ├── hooks/              # useIsMobile, etc.
@@ -80,7 +127,7 @@ src/
 
 ## Design System
 
-UI components in `shared/components/` are kept in sync with [lavendar-storybook](https://github.com/ShrutiVellanki/lavendar-storybook), a copy-paste component library documented with Storybook. Both projects share the same Lavender Dawn / Lavender Moon theme tokens defined in `index.css`.
+UI components in `shared/components/` are kept in sync with [lavender-storybook](https://github.com/ShrutiVellanki/lavender-storybook), a copy-paste component library documented with Storybook. Both projects share the same Lavender Dawn / Lavender Moon theme tokens defined in `index.css`.
 
 ## Developer Settings
 

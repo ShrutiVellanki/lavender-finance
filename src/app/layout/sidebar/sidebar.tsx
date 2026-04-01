@@ -150,13 +150,13 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
             <ExternalLink className="w-3 h-3 opacity-40 shrink-0" />
           </a>
           <a
-            href="https://github.com/ShrutiVellanki/lavendar-storybook"
+            href="https://github.com/ShrutiVellanki/lavender-storybook"
             target="_blank"
             rel="noopener noreferrer"
             className={popoverItemCls}
           >
             {GH_ICON}
-            <span className="flex-1 truncate">lavendar-storybook</span>
+            <span className="flex-1 truncate">lavender-storybook</span>
             <ExternalLink className="w-3 h-3 opacity-40 shrink-0" />
           </a>
         </div>

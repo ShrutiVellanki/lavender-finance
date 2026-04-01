@@ -3,7 +3,7 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/
 import { aggregateBalancesByDate, groupAccountsByType, accountTypes } from "@/shared/utils";
 import { useCurrency } from "@/shared/context/currency";
 import NetWorthChart from "@/features/dashboard/components/net-worth/net-worth";
-import { fetchAccountData, fetchChartData } from "@/services/api";
+import { fetchAccountData, fetchChartData, getSavedCards } from "@/services/api";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account, NetWorthData, ChartData } from "@/types";
 import { Loading } from "@/shared/components/Loading";
@@ -64,7 +64,22 @@ export default function AccountsPage() {
       setLoading(true);
       setError(null);
       const [accountData, chartData] = await Promise.all([fetchAccountData(), fetchChartData()]);
-      setGroupedAccounts(groupAccountsByType(accountData));
+
+      const userCards = getSavedCards();
+      const merged = { ...accountData };
+      for (const card of userCards) {
+        if (!merged[card.id]) {
+          merged[card.id] = {
+            id: card.id,
+            name: card.name,
+            current_balance: 0,
+            type: "credit",
+            subtype: "credit_card",
+          };
+        }
+      }
+
+      setGroupedAccounts(groupAccountsByType(merged));
       setRawChartData(chartData);
     } catch (err) {
       setError((err as FetchError).message || "Failed to fetch data");

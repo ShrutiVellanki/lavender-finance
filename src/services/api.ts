@@ -31,6 +31,34 @@ export const fetchWrapper = async (
   return response.json();
 };
 
+// ──── localStorage helpers ────
+
+const LS_KEYS = {
+  overrides: "lavender-data-overrides",
+  settings: "lavender-settings",
+  cards: "lavender-cards",
+  language: "lavender-language",
+} as const;
+
+function lsGet<T>(key: string): T | null {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function lsSet(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch { /* quota exceeded – silently degrade */ }
+}
+
+function lsRemove(key: string) {
+  try { localStorage.removeItem(key); } catch { /* noop */ }
+}
+
 // ──── Data override layer ────
 
 interface DataOverrides {
@@ -42,17 +70,22 @@ interface DataOverrides {
   settings?: UserSettings;
 }
 
-let _overrides: DataOverrides = {};
+let _overrides: DataOverrides = lsGet<DataOverrides>(LS_KEYS.overrides) ?? {};
 
 export function setDataOverrides(overrides: DataOverrides) {
   _overrides = overrides;
+  lsSet(LS_KEYS.overrides, _overrides);
   if (overrides.settings) {
     _settings = { ..._settings, ...overrides.settings };
+    lsSet(LS_KEYS.settings, _settings);
   }
 }
 
 export function clearDataOverrides() {
   _overrides = {};
+  _settings = { ...userSettings };
+  lsRemove(LS_KEYS.overrides);
+  lsRemove(LS_KEYS.settings);
 }
 
 export function hasDataOverrides(): boolean {
@@ -238,7 +271,7 @@ export const fetchSpendingSummary = async (): Promise<SpendingSummary[]> => {
   );
 };
 
-let _settings: UserSettings = { ...userSettings };
+let _settings: UserSettings = lsGet<UserSettings>(LS_KEYS.settings) ?? { ...userSettings };
 
 export const fetchSettings = async (): Promise<UserSettings> => {
   await delay(200);
@@ -252,6 +285,7 @@ export const fetchSettings = async (): Promise<UserSettings> => {
 export const updateSettings = async (updates: Partial<UserSettings>): Promise<UserSettings> => {
   await delay(400);
   _settings = { ..._settings, ...updates };
+  lsSet(LS_KEYS.settings, _settings);
   return { ..._settings };
 };
 
@@ -266,10 +300,40 @@ export function exportAllData(): DataOverrides {
   };
 }
 
+// ──── Card persistence ────
+
+let _userCards: CardEntry[] = lsGet<CardEntry[]>(LS_KEYS.cards) ?? [];
+
+export function getSavedCards(): CardEntry[] {
+  return [..._userCards];
+}
+
+export function saveCard(card: CardEntry) {
+  _userCards = [card, ..._userCards.filter((c) => c.id !== card.id)];
+  lsSet(LS_KEYS.cards, _userCards);
+}
+
+export function removeCard(cardId: string) {
+  _userCards = _userCards.filter((c) => c.id !== cardId);
+  lsSet(LS_KEYS.cards, _userCards);
+}
+
 export const submitCard = async (card: Omit<CardEntry, "id" | "syncing">): Promise<CardEntry> => {
   await delay(1500);
   if (Math.random() < 0.1) {
     throw new Error("Card verification failed. Please try again.");
   }
-  return { ...card, id: `card-${Date.now()}` };
+  const confirmed: CardEntry = { ...card, id: `card-${Date.now()}` };
+  saveCard(confirmed);
+  return confirmed;
 };
+
+// ──── Language persistence ────
+
+export function getSavedLanguage(): string | null {
+  return lsGet<string>(LS_KEYS.language);
+}
+
+export function saveLanguage(lang: string) {
+  lsSet(LS_KEYS.language, lang);
+}
