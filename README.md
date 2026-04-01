@@ -3,7 +3,9 @@
 **[Live Demo](https://lavender-finance.vercel.app)**
 
 A personal finance dashboard built with React + TypeScript. Fully responsive & available in Sun and Moon themes.
-
+<p>
+  <img src="./docs/screenshots/dashboard-light.png" alt="Dashboard - Light Mode" width="720" />
+</p>
 <p>
   <img src="./docs/screenshots/dashboard-dark.png" alt="Dashboard - Dark Mode" width="720" />
 </p>
