@@ -225,8 +225,6 @@ function seededRandom(seed: number) {
 
 function generateTransactions(): Transaction[] {
   const now = new Date();
-  const currentDayOfMonth = now.getDate();
-  const daysInPrevMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
 
   return Array.from({ length: 50 }, (_, i) => {
     const seed = i + 42;
@@ -240,17 +238,9 @@ function generateTransactions(): Transaction[] {
         ? 50 + seededRandom(seed + 1) * 450
         : 5 + seededRandom(seed + 1) * 295;
 
-    let daysAgo: number;
-    if (i < 30) {
-      // First 30 txns fall within the current month (0 to currentDayOfMonth-1 days ago)
-      daysAgo = Math.floor(seededRandom(seed + 2) * Math.max(currentDayOfMonth, 1));
-    } else {
-      // Remaining 20 txns fall in the previous month
-      daysAgo = currentDayOfMonth + Math.floor(seededRandom(seed + 2) * daysInPrevMonth);
-    }
-
-    const txDate = new Date(now);
-    txDate.setDate(now.getDate() - daysAgo);
+    // Spread across last 60 days — guarantees last-30-day coverage
+    const daysAgo = Math.floor(seededRandom(seed + 2) * 60);
+    const txDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysAgo);
 
     return {
       id: `tx-${String(i + 1).padStart(3, "0")}`,
@@ -333,12 +323,12 @@ export const budgetData: BudgetCategory[] = budgetsByMonth[`${new Date().getFull
 
 function spentLast30Days(): Record<string, number> {
   const now = new Date();
-  const cutoff = new Date(now);
-  cutoff.setDate(cutoff.getDate() - 30);
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const cutoff = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 30);
+  const cutoffStr = `${cutoff.getFullYear()}-${String(cutoff.getMonth() + 1).padStart(2, "0")}-${String(cutoff.getDate()).padStart(2, "0")}`;
   const totals: Record<string, number> = {};
   for (const tx of transactionData) {
-    const d = new Date(tx.date);
-    if (d >= cutoff && d <= now && tx.amount < 0 && tx.category !== "Transfer") {
+    if (tx.date >= cutoffStr && tx.date <= todayStr && tx.amount < 0 && tx.category !== "Transfer") {
       totals[tx.category] = (totals[tx.category] ?? 0) + Math.abs(tx.amount);
     }
   }
