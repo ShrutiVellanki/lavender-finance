@@ -329,11 +329,24 @@ function generateMonthlyBudgets(): Record<string, BudgetCategory[]> {
 export const budgetsByMonth = generateMonthlyBudgets();
 export const budgetData: BudgetCategory[] = budgetsByMonth[`${new Date().getFullYear()}-${new Date().getMonth()}`] ?? [];
 
-// ──────────────────────── Spending Summary ────────────────────────
+// ──────────────────────── Spending Summary (last 30 days) ────────────────────────
+
+function spentLast30Days(): Record<string, number> {
+  const now = new Date();
+  const cutoff = new Date(now);
+  cutoff.setDate(cutoff.getDate() - 30);
+  const totals: Record<string, number> = {};
+  for (const tx of transactionData) {
+    const d = new Date(tx.date);
+    if (d >= cutoff && d <= now && tx.amount < 0 && tx.category !== "Transfer") {
+      totals[tx.category] = (totals[tx.category] ?? 0) + Math.abs(tx.amount);
+    }
+  }
+  return totals;
+}
 
 export const spendingSummary: SpendingSummary[] = (() => {
-  const now = new Date();
-  const spent = spentByCategory(now.getMonth(), now.getFullYear());
+  const spent = spentLast30Days();
   return budgetLimits.map(({ category }) => ({
     category,
     amount: Math.round((spent[category] ?? 0) * 100) / 100,

@@ -34,6 +34,7 @@
     "monthlySpending": "Gastos Mensuales",
     "netWorthTab": "Patrimonio Neto",
     "spendingTab": "Gastos por Categoría",
+    "last30Days": "Últimos 30 días",
     "recentTransactions": "Transacciones Recientes",
     "budgetOverview": "Resumen de Presupuesto",
     "thisMonth": "{{value}}% este mes",

@@ -34,6 +34,7 @@
     "monthlySpending": "Monthly Spending",
     "netWorthTab": "Net Worth",
     "spendingTab": "Spending by Category",
+    "last30Days": "Last 30 days",
     "recentTransactions": "Recent Transactions",
     "budgetOverview": "Budget Overview",
     "thisMonth": "{{value}}% this month",

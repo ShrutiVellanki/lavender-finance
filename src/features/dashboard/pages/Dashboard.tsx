@@ -167,7 +167,7 @@ export default function Dashboard() {
               </TabsPanel>
               <TabsPanel value="spending" className="p-6">
                 <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted mb-3">
-                  {new Date().toLocaleDateString(undefined, { month: "long", year: "numeric" })}
+                  {t("dashboard.last30Days")}
                 </p>
                 <ChartContainer config={spendingChartConfig} className="h-[280px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
