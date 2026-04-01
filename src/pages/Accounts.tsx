@@ -1,5 +1,3 @@
-"use client";
-
 import { Layout } from "@/components/layout/layout";
 import { AccountInfo } from "@/components/product/account/account-info/account-info";
 import { Accordion } from "@/components/accordion/accordion";
@@ -85,4 +83,4 @@ export default function AccountsPage() {
       </div>
     </Layout>
   );
-} 
+}

@@ -1,8 +1,6 @@
-"use client";
-
 import { useTheme } from "@/theme-provider";
 import { PiggyBank } from "lucide-react";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export default function NotFound() {
   const { theme } = useTheme();
@@ -30,7 +28,7 @@ export default function NotFound() {
         </div>
 
         <Link 
-          href="/"
+          to="/"
           className="inline-block px-6 py-3 text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 hover:bg-lavenderDawn-iris/20 dark:hover:bg-lavenderMoon-iris/20 rounded-lg transition-colors"
         >
           Return Home
@@ -38,4 +36,4 @@ export default function NotFound() {
       </div>
     </div>
   );
-} 
+}

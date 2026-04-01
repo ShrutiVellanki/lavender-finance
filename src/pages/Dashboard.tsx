@@ -1,5 +1,3 @@
-"use client";
-
 import { Layout } from "@/components/layout/layout";
 import { useTheme } from "@/theme-provider";
 import NetWorthChart from "@/components/product/net-worth/net-worth";
@@ -10,9 +8,8 @@ import { fetchAccountData, fetchChartData } from "@/api/api";
 import { aggregateBalancesByDate, groupAccountsByType } from "@/utils/utils";
 import { Loading } from "@/components/ui/loading";
 import { Error } from "@/components/ui/error";
-import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, LineChart, PiggyBank, Info, Gift } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Wallet, CreditCard, LineChart, PiggyBank, Gift } from "lucide-react";
 import { Accordion } from "@/components/accordion/accordion";
-import { AccountInfo } from "@/components/product/account/account-info/account-info";
 
 interface FetchError {
   message: string;
@@ -71,16 +68,13 @@ export default function Dashboard() {
     return <Error message={error} onRetry={fetchData} />;
   }
 
-  // Calculate total assets and liabilities from chart data
   const calculateTotals = () => {
     let totalAssets = 0;
     let totalLiabilities = 0;
 
     if (totalBalanceByDateArray && totalBalanceByDateArray.length > 0) {
-      // Get the latest data point from each account in the chart
       const latestData = totalBalanceByDateArray[totalBalanceByDateArray.length - 1];
       
-      // For assets and liabilities, we need to look at individual accounts
       if (groupedAccounts) {
         Object.entries(groupedAccounts).forEach(([type, accounts]) => {
           accounts.forEach(account => {
@@ -94,12 +88,10 @@ export default function Dashboard() {
         });
       }
 
-      // Adjust the totals to match the net worth from chart data
       const chartNetWorth = latestData.balance;
       const currentNetWorth = totalAssets - totalLiabilities;
       const adjustment = chartNetWorth - currentNetWorth;
       
-      // Distribute the adjustment proportionally between assets and liabilities
       if (adjustment !== 0) {
         const totalAbsolute = totalAssets + totalLiabilities;
         if (totalAbsolute > 0) {
@@ -132,7 +124,6 @@ export default function Dashboard() {
     <Layout>
       <div className="md:p-0 p-6 overflow-x-auto">
         <div className="min-w-[768px] space-y-6">
-          {/* Welcome Banner */}
           <div className="px-6 py-4 flex items-center gap-3">
             <PiggyBank className="w-10 h-10 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
             <h1 className="text-2xl font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
@@ -140,7 +131,6 @@ export default function Dashboard() {
             </h1>
           </div>
 
-          {/* Latest Updates */}
           <div className="rounded-2xl border border-lavenderDawn-overlay dark:border-lavenderMoon-overlay bg-lavenderDawn-overlay/50 dark:bg-[#636363]/50 backdrop-blur-sm">
             <Accordion
               header={
@@ -196,29 +186,23 @@ export default function Dashboard() {
             </Accordion>
           </div>
 
-          {/* Overview */}
           <div className="rounded-2xl border border-lavenderDawn-overlay dark:border-lavenderMoon-overlay bg-lavenderDawn-overlay/50 dark:bg-[#636363]/50 backdrop-blur-sm p-6 hover:bg-lavenderDawn-highlightLow/30 dark:hover:bg-[#636363]/70 transition-all duration-200">
             <h2 className="text-lg font-medium text-lavenderDawn-text dark:text-lavenderMoon-text mb-4">Overview</h2>
             <div className="space-y-2">
-              {/* Net Worth */}
               <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <PiggyBank className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-                          Net Worth
-                        </h3>
-                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          Your total assets minus total liabilities
-                        </p>
+                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Net Worth</h3>
+                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">Your total assets minus total liabilities</p>
                       </div>
                       <div>
                         <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris text-right">
                           ${netWorth.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
-                        <div className={`flex items-center justify-end mt-0.5`}>
+                        <div className="flex items-center justify-end mt-0.5">
                           <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 text-lavenderDawn-iris dark:text-lavenderMoon-iris">
                             {netWorthChange >= 0 ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
                             <span className="text-sm font-medium">{Math.abs(netWorthChange).toFixed(2)}%</span>
@@ -230,19 +214,14 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Total Assets */}
               <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <Wallet className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-                          Total Assets
-                        </h3>
-                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          The total value of all your assets, including cash, investments, and property
-                        </p>
+                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Total Assets</h3>
+                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">The total value of all your assets</p>
                       </div>
                       <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">
                         ${totalAssets.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -252,19 +231,14 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Total Liabilities */}
               <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <CreditCard className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-                          Total Liabilities
-                        </h3>
-                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          The total amount you owe, including credit cards, loans, and mortgages
-                        </p>
+                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Total Liabilities</h3>
+                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">The total amount you owe</p>
                       </div>
                       <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">
                         ${totalLiabilities.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -274,19 +248,14 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              {/* Account Types */}
               <div className="rounded-lg bg-lavenderDawn-overlay/30 dark:bg-lavenderMoon-overlay/30 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-all duration-200">
                 <div className="flex items-start gap-4 p-4">
                   <LineChart className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris mt-1" />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-                          Account Types
-                        </h3>
-                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">
-                          The different types of accounts you have added to track your finances
-                        </p>
+                        <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Account Types</h3>
+                        <p className="text-sm text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 mt-0.5">The different types of accounts you track</p>
                       </div>
                       <p className="text-base font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">
                         {groupedAccounts ? Object.keys(groupedAccounts).length : 0}

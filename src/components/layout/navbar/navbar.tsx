@@ -1,12 +1,11 @@
-"use client";
 import type React from "react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { PiggyBank, Menu, X } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 
 export const Navbar: React.FC = () => {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   const navItems = [
@@ -38,7 +37,6 @@ export const Navbar: React.FC = () => {
             </span>
           </a>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
@@ -56,7 +54,6 @@ export const Navbar: React.FC = () => {
             <ThemeSwitcher />
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -71,7 +68,6 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
@@ -97,4 +93,4 @@ export const Navbar: React.FC = () => {
       </div>
     </nav>
   );
-}; 
+};

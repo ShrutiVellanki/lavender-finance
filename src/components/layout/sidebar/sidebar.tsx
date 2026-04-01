@@ -1,14 +1,8 @@
 import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Home,
   Layers,
-  Search,
-  Bell,
-  Settings,
-  Sidebar as SidebarIcon,
-  LucideIcon,
   PiggyBank,
   User,
   Sun,
@@ -38,7 +32,7 @@ const navItems: NavItem[] = [
 ];
 
 export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
-  const pathname = usePathname();
+  const { pathname } = useLocation();
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
@@ -88,7 +82,7 @@ export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
           return (
             <Link
               key={item.href}
-              href={item.href}
+              to={item.href}
               className={`flex items-center transition-all duration-200 ${
                 isCollapsed 
                   ? 'justify-center' 
@@ -113,7 +107,6 @@ export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
           );
         })}
 
-        {/* Budgeting (Coming Soon) */}
         <div
           className={`flex items-center transition-all duration-200 cursor-not-allowed opacity-60 ${
             isCollapsed 

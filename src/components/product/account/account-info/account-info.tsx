@@ -1,7 +1,7 @@
 import type React from "react";
 import { AccountBalance } from "../account-balance/account-balance";
 import { accountSubtypeLabels } from "@/constants/account-constants";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
 export interface AccountInfoProps {
   name: string;
@@ -22,7 +22,7 @@ export const AccountInfo: React.FC<AccountInfoProps> = ({
   
   return (
     <Link 
-      href="/not-found"
+      to="/not-found"
       className={`w-full flex items-center justify-between p-4 cursor-pointer hover:bg-lavenderDawn-highlightLow dark:hover:bg-lavenderMoon-highlightMed transition-all duration-200 rounded-lg hover:translate-x-1 ${className || ''}`}
     >
       <div className="flex items-center space-x-4">

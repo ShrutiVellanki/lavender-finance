@@ -64,11 +64,9 @@
   --radius-sm: 4px;
 }
 
-/* Dark mode theme applied with media query */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
-@layer base {
-}
+@layer base {}
 
 /* 3D card transform utilities */
 .perspective-1000 {
