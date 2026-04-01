@@ -2,7 +2,7 @@ import React from "react";
 import { useChart } from "./chart-context";
 import { getPayloadConfigFromPayload } from "./config";
 import * as RechartsPrimitive from "recharts";
-import AccountBalance from "../product/account/account-balance/account-balance";
+import { AccountBalance } from "../product/account/account-balance/account-balance";
 
 const ChartTooltipContent = React.forwardRef<
   HTMLDivElement,
