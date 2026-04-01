@@ -70,7 +70,9 @@ export function TabsList({
       aria-orientation={orientation}
       aria-label={ariaLabel}
       className={cn(
-        "inline-flex items-center gap-1 rounded-lg bg-muted/50 p-1 text-muted-foreground",
+        "inline-flex items-center gap-1 rounded-lg p-1",
+        "bg-lavenderDawn-highlightLow/60 dark:bg-lavenderMoon-highlightLow/60",
+        "text-lavenderDawn-muted dark:text-lavenderMoon-muted",
         orientation === "vertical" && "flex-col",
         className,
       )}
@@ -151,12 +153,12 @@ export function TabsTrigger({
       onKeyDown={handleKeyDown}
       className={cn(
         "inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1.5",
-        "text-[13px] font-medium ring-offset-background transition-all",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "text-[13px] font-medium transition-all",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lavenderDawn-iris/40 dark:focus-visible:ring-lavenderMoon-iris/40",
         "disabled:pointer-events-none disabled:opacity-50",
         selected
-          ? "bg-background text-foreground shadow-sm"
-          : "text-muted-foreground hover:bg-background/50 hover:text-foreground",
+          ? "bg-lavenderDawn-surface dark:bg-lavenderMoon-surface text-lavenderDawn-text dark:text-lavenderMoon-text shadow-sm"
+          : "text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:bg-lavenderDawn-surface/50 dark:hover:bg-lavenderMoon-surface/50 hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text",
         className,
       )}
     >
@@ -187,7 +189,7 @@ export function TabsPanel({
       hidden={!selected}
       tabIndex={0}
       className={cn(
-        "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        "mt-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lavenderDawn-iris/40 dark:focus-visible:ring-lavenderMoon-iris/40",
         className,
       )}
     >

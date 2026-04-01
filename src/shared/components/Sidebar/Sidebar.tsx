@@ -34,7 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
             {!collapsed && (
               <span className="text-[15px] font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text truncate">
-                Lavender
+                Lavender Finance
               </span>
             )}
           </div>

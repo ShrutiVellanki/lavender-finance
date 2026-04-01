@@ -168,6 +168,8 @@
     "jsonFormat": "JSON up to 5MB",
     "validating": "Validating...",
     "applyData": "Apply Data",
+    "exportData": "Export Current Data",
+    "exportDataDesc": "Download all current data as a JSON file you can re-import later.",
     "resetData": "Reset to Default",
     "dataActive": "Custom data active",
     "dataApplied": "Custom data applied — {{counts}}. Reload pages to see changes.",

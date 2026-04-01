@@ -39,12 +39,16 @@ interface DataOverrides {
   transactions?: Transaction[];
   budgets?: Record<string, BudgetCategory[]>;
   spending?: SpendingSummary[];
+  settings?: UserSettings;
 }
 
 let _overrides: DataOverrides = {};
 
 export function setDataOverrides(overrides: DataOverrides) {
   _overrides = overrides;
+  if (overrides.settings) {
+    _settings = { ..._settings, ...overrides.settings };
+  }
 }
 
 export function clearDataOverrides() {
@@ -61,6 +65,7 @@ export interface DataOverrideSchema {
   transactions?: { id: string; accountId: string; description: string; amount: number; date: string; category: string; status: string; merchant: string }[];
   budgets?: Record<string, { category: string; limit: number; spent: number }[]>;
   spending?: { category: string; amount: number }[];
+  settings?: { name: string; email: string; phone: string; currency?: string };
 }
 
 export function validateDataOverride(data: unknown): { valid: boolean; errors: string[]; counts: Record<string, number> } {
@@ -72,7 +77,7 @@ export function validateDataOverride(data: unknown): { valid: boolean; errors: s
   }
 
   const obj = data as Record<string, unknown>;
-  const allowedKeys = ["accounts", "chart", "transactions", "budgets", "spending"];
+  const allowedKeys = ["accounts", "chart", "transactions", "budgets", "spending", "settings"];
   const extraKeys = Object.keys(obj).filter(k => !allowedKeys.includes(k));
   if (extraKeys.length) errors.push(`Unknown keys: ${extraKeys.join(", ")}`);
 
@@ -160,6 +165,19 @@ export function validateDataOverride(data: unknown): { valid: boolean; errors: s
     }
   }
 
+  if (obj.settings !== undefined) {
+    if (typeof obj.settings !== "object" || obj.settings === null || Array.isArray(obj.settings)) {
+      errors.push("settings: must be an object");
+    } else {
+      const s = obj.settings as Record<string, unknown>;
+      if (typeof s.name !== "string") errors.push('settings: missing or invalid "name"');
+      if (typeof s.email !== "string") errors.push('settings: missing or invalid "email"');
+      if (typeof s.phone !== "string") errors.push('settings: missing or invalid "phone"');
+      if (s.currency !== undefined && typeof s.currency !== "string") errors.push('settings: "currency" must be a string');
+      counts.settings = 1;
+    }
+  }
+
   return { valid: errors.length === 0, errors, counts };
 }
 
@@ -236,6 +254,17 @@ export const updateSettings = async (updates: Partial<UserSettings>): Promise<Us
   _settings = { ..._settings, ...updates };
   return { ..._settings };
 };
+
+export function exportAllData(): DataOverrides {
+  return {
+    accounts: _overrides.accounts ?? defaultAccountData,
+    chart: _overrides.chart ?? defaultChartData,
+    transactions: _overrides.transactions ?? defaultTransactionData,
+    budgets: _overrides.budgets ?? defaultBudgetsByMonth,
+    spending: _overrides.spending ?? defaultSpendingSummary,
+    settings: { ..._settings },
+  };
+}
 
 export const submitCard = async (card: Omit<CardEntry, "id" | "syncing">): Promise<CardEntry> => {
   await delay(1500);

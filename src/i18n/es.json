@@ -168,6 +168,8 @@
     "jsonFormat": "JSON hasta 5MB",
     "validating": "Validando...",
     "applyData": "Aplicar Datos",
+    "exportData": "Exportar Datos Actuales",
+    "exportDataDesc": "Descarga todos los datos actuales como un archivo JSON que puedes reimportar más tarde.",
     "resetData": "Restablecer Predeterminado",
     "dataActive": "Datos personalizados activos",
     "dataApplied": "Datos personalizados aplicados — {{counts}}. Recarga las páginas para ver los cambios.",

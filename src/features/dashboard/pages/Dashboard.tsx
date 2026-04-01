@@ -12,7 +12,6 @@ import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { StatCard } from "@/shared/components/StatCard";
 import { ProgressBar } from "@/shared/components/ProgressBar";
 import { Badge } from "@/shared/components/Badge";
-import { Button } from "@/shared/components/Button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Card";
 import { Tabs, TabsList, TabsTrigger, TabsPanel } from "@/shared/components/Tabs";
 import { useCurrency } from "@/shared/context/currency";
@@ -156,10 +155,12 @@ export default function Dashboard() {
           {/* Tabs: Net Worth / Spending */}
           <Card>
             <Tabs defaultValue="networth">
-              <TabsList>
-                <TabsTrigger value="networth">{t("dashboard.netWorthTab")}</TabsTrigger>
-                <TabsTrigger value="spending">{t("dashboard.spendingTab")}</TabsTrigger>
-              </TabsList>
+              <div className="px-6 pt-5">
+                <TabsList>
+                  <TabsTrigger value="networth">{t("dashboard.netWorthTab")}</TabsTrigger>
+                  <TabsTrigger value="spending">{t("dashboard.spendingTab")}</TabsTrigger>
+                </TabsList>
+              </div>
               <TabsPanel value="networth" className="p-6">
                 {totalBalanceByDateArray && (
                   <NetWorthChart totalBalanceByDateArray={totalBalanceByDateArray} />
@@ -187,62 +188,62 @@ export default function Dashboard() {
           {/* Bottom Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Recent Transactions */}
-            <Card>
-              <CardHeader className="flex-row items-center justify-between space-y-0">
-                <div className="flex items-center gap-2">
-                  <Receipt className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-                  <CardTitle>{t("dashboard.recentTransactions")}</CardTitle>
-                </div>
-                <Link to="/transactions">
-                  <Button variant="link" size="sm">{t("common.viewAll")}</Button>
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {recentTx.map((tx) => (
-                    <div key={tx.id} className="flex items-center justify-between gap-2 py-2 border-b border-lavenderDawn-highlightLow/50 dark:border-lavenderMoon-highlightLow/50 last:border-0">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate">{tx.description}</p>
-                        <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted truncate">{tx.date} · {tx.category}</p>
+            <Link to="/transactions" className="block group">
+              <Card className="h-full transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-lavenderDawn-iris/20 dark:group-hover:ring-lavenderMoon-iris/20">
+                <CardHeader className="flex-row items-center justify-between space-y-0">
+                  <div className="flex items-center gap-2">
+                    <Receipt className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                    <CardTitle>{t("dashboard.recentTransactions")}</CardTitle>
+                  </div>
+                  <span className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted group-hover:text-lavenderDawn-iris dark:group-hover:text-lavenderMoon-iris transition-colors">→</span>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {recentTx.map((tx) => (
+                      <div key={tx.id} className="flex items-center justify-between gap-2 py-2 border-b border-lavenderDawn-highlightLow/50 dark:border-lavenderMoon-highlightLow/50 last:border-0">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate">{tx.description}</p>
+                          <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted truncate">{tx.date} · {tx.category}</p>
+                        </div>
+                        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                          <span className="hidden sm:inline"><Badge variant={STATUS_VARIANT[tx.status]} icon={STATUS_ICON[tx.status]}>{tx.status}</Badge></span>
+                          <span className={`text-sm font-medium tabular-nums ${tx.amount >= 0 ? "text-lavenderDawn-foam dark:text-lavenderMoon-foam" : "text-lavenderDawn-text dark:text-lavenderMoon-text"}`}>
+                            {tx.amount >= 0 ? "+" : ""}{formatCurrency(tx.amount)}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        <span className="hidden sm:inline"><Badge variant={STATUS_VARIANT[tx.status]} icon={STATUS_ICON[tx.status]}>{tx.status}</Badge></span>
-                        <span className={`text-sm font-medium tabular-nums ${tx.amount >= 0 ? "text-lavenderDawn-foam dark:text-lavenderMoon-foam" : "text-lavenderDawn-text dark:text-lavenderMoon-text"}`}>
-                          {tx.amount >= 0 ? "+" : ""}{formatCurrency(tx.amount)}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Budget Overview */}
-            <Card>
-              <CardHeader className="flex-row items-center justify-between space-y-0">
-                <div className="flex items-center gap-2">
-                  <Info className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-                  <CardTitle>{t("dashboard.budgetOverview")}</CardTitle>
-                </div>
-                <Link to="/budget">
-                  <Button variant="link" size="sm">{t("common.viewAll")}</Button>
-                </Link>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-5">
-                  {budgets.slice(0, 4).map((b) => (
-                    <ProgressBar
-                      key={b.category}
-                      value={b.spent}
-                      max={b.limit}
-                      label={b.category}
-                      autoVariant
-                      valueFormatter={(v, m) => `${formatCurrency(v)} / ${formatCurrency(m)}`}
-                    />
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <Link to="/budget" className="block group">
+              <Card className="h-full transition-shadow duration-200 group-hover:shadow-md group-hover:ring-1 group-hover:ring-lavenderDawn-iris/20 dark:group-hover:ring-lavenderMoon-iris/20">
+                <CardHeader className="flex-row items-center justify-between space-y-0">
+                  <div className="flex items-center gap-2">
+                    <Info className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                    <CardTitle>{t("dashboard.budgetOverview")}</CardTitle>
+                  </div>
+                  <span className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted group-hover:text-lavenderDawn-iris dark:group-hover:text-lavenderMoon-iris transition-colors">→</span>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-5">
+                    {budgets.slice(0, 4).map((b) => (
+                      <ProgressBar
+                        key={b.category}
+                        value={b.spent}
+                        max={b.limit}
+                        label={b.category}
+                        autoVariant
+                        valueFormatter={(v, m) => `${formatCurrency(v)} / ${formatCurrency(m)}`}
+                      />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,14 +1,14 @@
 import { Layout } from "@/app/layout/layout";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { UserSettings, CurrencyCode } from "@/types";
-import { fetchSettings, updateSettings, setDataOverrides, clearDataOverrides, hasDataOverrides, validateDataOverride } from "@/services/api";
+import { fetchSettings, updateSettings, setDataOverrides, clearDataOverrides, hasDataOverrides, validateDataOverride, exportAllData } from "@/services/api";
 import { Loading } from "@/shared/components/Loading";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
 import { useCurrency } from "@/shared/context/currency";
-import { Save, User, Globe, Coins, Code2, Upload, FileJson, Check, AlertTriangle, X, RotateCcw } from "lucide-react";
+import { Save, User, Globe, Coins, Code2, Upload, Download, FileJson, Check, AlertTriangle, X, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const inputCls =
@@ -153,6 +153,7 @@ export default function SettingsPage() {
     setAppliedMessage(t("settings.dataApplied", { counts: parts }));
     setJsonFile(null);
     setValidationResult(null);
+    load();
   }
 
   function resetOverride() {
@@ -162,6 +163,19 @@ export default function SettingsPage() {
     setValidationResult(null);
     setAppliedMessage(null);
     setDevError(null);
+  }
+
+  function handleExportData() {
+    const data = exportAllData();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lavender-finance-data-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 
   if (loading) return <Loading message={t("common.loading")} />;
@@ -176,58 +190,212 @@ export default function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-          {/* ── Left column: Profile ── */}
-          <Card className="p-6">
-            <form onSubmit={handleSave} className="space-y-5">
-              <div className="flex items-center gap-4 pb-4 border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed">
-                <div className="w-12 h-12 rounded-full bg-lavenderDawn-iris/15 dark:bg-lavenderMoon-iris/15 flex items-center justify-center">
-                  <User className="w-6 h-6 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+          {/* ── Left column: Profile + Developer Settings ── */}
+          <div className="space-y-6">
+            <Card className="p-6">
+              <form onSubmit={handleSave} className="space-y-5">
+                <div className="flex items-center gap-4 pb-4 border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed">
+                  <div className="w-12 h-12 rounded-full bg-lavenderDawn-iris/15 dark:bg-lavenderMoon-iris/15 flex items-center justify-center">
+                    <User className="w-6 h-6 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{settings?.name}</p>
+                    <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">{settings?.email}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{settings?.name}</p>
-                  <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">{settings?.email}</p>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.fullName")}</label>
+                  <input className={inputCls} value={draft?.name ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, name: e.target.value } : d)} />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.email")}</label>
+                  <input className={inputCls} type="email" value={draft?.email ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, email: e.target.value } : d)} />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.phone")}</label>
+                  <input
+                    className={showPhoneError ? inputErrorCls : inputCls}
+                    type="tel"
+                    placeholder="(555) 123-4567"
+                    value={draft?.phone ?? ""}
+                    onChange={(e) => {
+                      const formatted = formatPhone(e.target.value);
+                      setDraft((d) => d ? { ...d, phone: formatted } : d);
+                    }}
+                    onBlur={() => setPhoneTouched(true)}
+                  />
+                  {showPhoneError && (
+                    <p className="text-[11px] text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.phoneInvalid")}</p>
+                  )}
+                </div>
+
+                {error && <p className="text-xs text-lavenderDawn-love dark:text-lavenderMoon-love">{error}</p>}
+
+                <div className="flex items-center gap-3 pt-2">
+                  <Button type="submit" disabled={!isDirty || saving || !phoneValid} className="gap-2">
+                    <Save className="w-3.5 h-3.5" />
+                    {saving ? t("settings.saving") : t("settings.saveChanges")}
+                  </Button>
+                  {saved && <Badge variant="success">{t("common.saved")}</Badge>}
+                </div>
+              </form>
+            </Card>
+
+            {/* Developer Settings */}
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 pb-4 border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed">
+                  <Code2 className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                  <div>
+                    <span className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{t("settings.developer")}</span>
+                    <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.developerDesc")}</p>
+                  </div>
+                </div>
+
+              {dataOverrideActive && (
+                <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-lavenderDawn-foam/10 dark:bg-lavenderMoon-foam/10 border border-lavenderDawn-foam/20 dark:border-lavenderMoon-foam/20">
+                  <div className="flex items-center gap-2 text-[12px] font-medium text-lavenderDawn-foam dark:text-lavenderMoon-foam">
+                    <Check className="w-3.5 h-3.5" />
+                    {t("settings.dataActive")}
+                  </div>
+                  <button
+                    onClick={resetOverride}
+                    className="flex items-center gap-1.5 text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text transition-colors"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    {t("settings.resetData")}
+                  </button>
+                </div>
+              )}
+
+              {appliedMessage && (
+                <p className="text-[12px] text-lavenderDawn-foam dark:text-lavenderMoon-foam">{appliedMessage}</p>
+              )}
+
+              <div className="space-y-2">
+                <p className="text-[12px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.uploadJsonDesc")}</p>
+                <div
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`relative flex flex-col items-center gap-2 p-6 rounded-lg border-2 border-dashed cursor-pointer transition-all duration-150 ${
+                    dragOver
+                      ? "border-lavenderDawn-iris dark:border-lavenderMoon-iris bg-lavenderDawn-iris/5 dark:bg-lavenderMoon-iris/5"
+                      : "border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed hover:border-lavenderDawn-iris/40 dark:hover:border-lavenderMoon-iris/40"
+                  }`}
+                >
+                  <Upload className="w-6 h-6 text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
+                  <div className="text-center">
+                    <p className="text-[13px] font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">{t("settings.chooseFile")}</p>
+                    <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.dragDrop")}</p>
+                  </div>
+                  <p className="text-[10px] text-lavenderDawn-muted/70 dark:text-lavenderMoon-muted/70">{t("settings.jsonFormat")}</p>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.fullName")}</label>
-                <input className={inputCls} value={draft?.name ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, name: e.target.value } : d)} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.email")}</label>
-                <input className={inputCls} type="email" value={draft?.email ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, email: e.target.value } : d)} />
-              </div>
-              <div className="space-y-1.5">
-                <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.phone")}</label>
-                <input
-                  className={showPhoneError ? inputErrorCls : inputCls}
-                  type="tel"
-                  placeholder="(555) 123-4567"
-                  value={draft?.phone ?? ""}
-                  onChange={(e) => {
-                    const formatted = formatPhone(e.target.value);
-                    setDraft((d) => d ? { ...d, phone: formatted } : d);
-                  }}
-                  onBlur={() => setPhoneTouched(true)}
-                />
-                {showPhoneError && (
-                  <p className="text-[11px] text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.phoneInvalid")}</p>
-                )}
+              <div className="flex items-center gap-3 pt-1">
+                <div className="flex-1 h-px bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow" />
+                <span className="text-[10px] uppercase tracking-wider text-lavenderDawn-muted/60 dark:text-lavenderMoon-muted/60">or</span>
+                <div className="flex-1 h-px bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow" />
               </div>
 
-              {error && <p className="text-xs text-lavenderDawn-love dark:text-lavenderMoon-love">{error}</p>}
+              <button
+                onClick={handleExportData}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-lavenderDawn-highlightMed/60 dark:border-lavenderMoon-highlightMed/60 bg-lavenderDawn-surface dark:bg-lavenderMoon-surface text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text hover:bg-lavenderDawn-highlightLow/40 dark:hover:bg-lavenderMoon-highlightLow/40 transition-colors"
+              >
+                <Download className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                {t("settings.exportData")}
+              </button>
+              <p className="text-[11px] text-lavenderDawn-muted/70 dark:text-lavenderMoon-muted/70">{t("settings.exportDataDesc")}</p>
 
-              <div className="flex items-center gap-3 pt-2">
-                <Button type="submit" disabled={!isDirty || saving || !phoneValid} className="gap-2">
-                  <Save className="w-3.5 h-3.5" />
-                  {saving ? t("settings.saving") : t("settings.saveChanges")}
-                </Button>
-                {saved && <Badge variant="success">{t("common.saved")}</Badge>}
-              </div>
-            </form>
+              {devError && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-lavenderDawn-love/10 dark:bg-lavenderMoon-love/10 border border-lavenderDawn-love/20 dark:border-lavenderMoon-love/20">
+                  <AlertTriangle className="w-4 h-4 text-lavenderDawn-love dark:text-lavenderMoon-love shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-lavenderDawn-love dark:text-lavenderMoon-love">{devError}</p>
+                </div>
+              )}
+
+              {jsonFile && validationResult && (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <FileJson className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+                    <span className="text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{jsonFile.name}</span>
+                    <button onClick={() => { setJsonFile(null); setValidationResult(null); }} className="ml-auto p-1 rounded hover:bg-lavenderDawn-overlay dark:hover:bg-lavenderMoon-overlay transition-colors">
+                      <X className="w-3.5 h-3.5 text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
+                    </button>
+                  </div>
+
+                  {validationResult.valid ? (
+                    <div className="space-y-3">
+                      <div className="p-3 rounded-lg bg-lavenderDawn-foam/10 dark:bg-lavenderMoon-foam/10 border border-lavenderDawn-foam/20 dark:border-lavenderMoon-foam/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Check className="w-3.5 h-3.5 text-lavenderDawn-foam dark:text-lavenderMoon-foam" />
+                          <span className="text-[12px] font-medium text-lavenderDawn-foam dark:text-lavenderMoon-foam">Validation passed</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {Object.entries(validationResult.counts).map(([key, count]) => (
+                            <Badge key={key} variant="default">
+                              {count} {key}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <Button onClick={applyOverride} className="gap-2">
+                        <Check className="w-3.5 h-3.5" />
+                        {t("settings.applyData")}
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="p-3 rounded-lg bg-lavenderDawn-love/10 dark:bg-lavenderMoon-love/10 border border-lavenderDawn-love/20 dark:border-lavenderMoon-love/20 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-3.5 h-3.5 text-lavenderDawn-love dark:text-lavenderMoon-love" />
+                        <span className="text-[12px] font-medium text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.validationFailed")}</span>
+                      </div>
+                      <ul className="space-y-1 ml-5.5">
+                        {validationResult.errors.slice(0, 10).map((err, i) => (
+                          <li key={i} className="text-[11px] text-lavenderDawn-love/80 dark:text-lavenderMoon-love/80 list-disc">{err}</li>
+                        ))}
+                        {validationResult.errors.length > 10 && (
+                          <li className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted list-disc">
+                            ...and {validationResult.errors.length - 10} more errors
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <details className="group">
+                <summary className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted cursor-pointer hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text transition-colors select-none">
+                  {t("settings.expectedFormat")}
+                </summary>
+                <div className="mt-2 p-3 rounded-lg bg-lavenderDawn-overlay dark:bg-lavenderMoon-overlay border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
+                  <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mb-2">{t("settings.schemaHint")}</p>
+                  <pre className="text-[10px] leading-relaxed text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 overflow-x-auto">{JSON.stringify({
+  settings: { name: "Jane Doe", email: "jane@example.com", phone: "(555) 123-4567", currency: "USD" },
+  accounts: { "acct-id": { id: "acct-id", name: "My Checking", current_balance: 1500, type: "depository", subtype: "checking" } },
+  transactions: [{ id: "tx-1", accountId: "acct-id", description: "Coffee Shop", amount: -4.5, date: "2026-03-15", category: "Dining", status: "completed", merchant: "Starbucks" }],
+  budgets: { "2026-3": [{ category: "Groceries", limit: 500, spent: 320 }] },
+  spending: [{ category: "Groceries", amount: 320 }],
+  chart: { "acct-id": [{ date: "2026-01-01", balance: 1200 }] }
+}, null, 2)}</pre>
+                </div>
+              </details>
+            </div>
           </Card>
+          </div>
 
-          {/* ── Right column: Language + Developer Settings ── */}
+          {/* ── Right column: Language + Currency ── */}
           <div className="space-y-6">
             {/* Language */}
             <Card className="p-6">
@@ -302,146 +470,6 @@ export default function SettingsPage() {
               </div>
             </Card>
 
-            {/* Developer Settings */}
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-center gap-3 pb-4 border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed">
-                  <Code2 className="w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-                  <div>
-                    <span className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{t("settings.developer")}</span>
-                    <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.developerDesc")}</p>
-                  </div>
-                </div>
-
-              {/* Status bar */}
-              {dataOverrideActive && (
-                <div className="flex items-center justify-between gap-3 p-3 rounded-lg bg-lavenderDawn-foam/10 dark:bg-lavenderMoon-foam/10 border border-lavenderDawn-foam/20 dark:border-lavenderMoon-foam/20">
-                  <div className="flex items-center gap-2 text-[12px] font-medium text-lavenderDawn-foam dark:text-lavenderMoon-foam">
-                    <Check className="w-3.5 h-3.5" />
-                    {t("settings.dataActive")}
-                  </div>
-                  <button
-                    onClick={resetOverride}
-                    className="flex items-center gap-1.5 text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text transition-colors"
-                  >
-                    <RotateCcw className="w-3 h-3" />
-                    {t("settings.resetData")}
-                  </button>
-                </div>
-              )}
-
-              {appliedMessage && (
-                <p className="text-[12px] text-lavenderDawn-foam dark:text-lavenderMoon-foam">{appliedMessage}</p>
-              )}
-
-              {/* Upload area */}
-              <div className="space-y-2">
-                <p className="text-[12px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.uploadJsonDesc")}</p>
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
-                  onDragLeave={() => setDragOver(false)}
-                  onDrop={handleDrop}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`relative flex flex-col items-center gap-2 p-6 rounded-lg border-2 border-dashed cursor-pointer transition-all duration-150 ${
-                    dragOver
-                      ? "border-lavenderDawn-iris dark:border-lavenderMoon-iris bg-lavenderDawn-iris/5 dark:bg-lavenderMoon-iris/5"
-                      : "border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed hover:border-lavenderDawn-iris/40 dark:hover:border-lavenderMoon-iris/40"
-                  }`}
-                >
-                  <Upload className="w-6 h-6 text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
-                  <div className="text-center">
-                    <p className="text-[13px] font-medium text-lavenderDawn-iris dark:text-lavenderMoon-iris">{t("settings.chooseFile")}</p>
-                    <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.dragDrop")}</p>
-                  </div>
-                  <p className="text-[10px] text-lavenderDawn-muted/70 dark:text-lavenderMoon-muted/70">{t("settings.jsonFormat")}</p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept=".json"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </div>
-              </div>
-
-              {/* Error display */}
-              {devError && (
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-lavenderDawn-love/10 dark:bg-lavenderMoon-love/10 border border-lavenderDawn-love/20 dark:border-lavenderMoon-love/20">
-                  <AlertTriangle className="w-4 h-4 text-lavenderDawn-love dark:text-lavenderMoon-love shrink-0 mt-0.5" />
-                  <p className="text-[12px] text-lavenderDawn-love dark:text-lavenderMoon-love">{devError}</p>
-                </div>
-              )}
-
-              {/* Validation results */}
-              {jsonFile && validationResult && (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <FileJson className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-                    <span className="text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{jsonFile.name}</span>
-                    <button onClick={() => { setJsonFile(null); setValidationResult(null); }} className="ml-auto p-1 rounded hover:bg-lavenderDawn-overlay dark:hover:bg-lavenderMoon-overlay transition-colors">
-                      <X className="w-3.5 h-3.5 text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
-                    </button>
-                  </div>
-
-                  {validationResult.valid ? (
-                    <div className="space-y-3">
-                      <div className="p-3 rounded-lg bg-lavenderDawn-foam/10 dark:bg-lavenderMoon-foam/10 border border-lavenderDawn-foam/20 dark:border-lavenderMoon-foam/20">
-                        <div className="flex items-center gap-2 mb-2">
-                          <Check className="w-3.5 h-3.5 text-lavenderDawn-foam dark:text-lavenderMoon-foam" />
-                          <span className="text-[12px] font-medium text-lavenderDawn-foam dark:text-lavenderMoon-foam">Validation passed</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {Object.entries(validationResult.counts).map(([key, count]) => (
-                            <Badge key={key} variant="default">
-                              {count} {key}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                      <Button onClick={applyOverride} className="gap-2">
-                        <Check className="w-3.5 h-3.5" />
-                        {t("settings.applyData")}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="p-3 rounded-lg bg-lavenderDawn-love/10 dark:bg-lavenderMoon-love/10 border border-lavenderDawn-love/20 dark:border-lavenderMoon-love/20 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <AlertTriangle className="w-3.5 h-3.5 text-lavenderDawn-love dark:text-lavenderMoon-love" />
-                        <span className="text-[12px] font-medium text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.validationFailed")}</span>
-                      </div>
-                      <ul className="space-y-1 ml-5.5">
-                        {validationResult.errors.slice(0, 10).map((err, i) => (
-                          <li key={i} className="text-[11px] text-lavenderDawn-love/80 dark:text-lavenderMoon-love/80 list-disc">{err}</li>
-                        ))}
-                        {validationResult.errors.length > 10 && (
-                          <li className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted list-disc">
-                            ...and {validationResult.errors.length - 10} more errors
-                          </li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Schema hint */}
-              <details className="group">
-                <summary className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted cursor-pointer hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text transition-colors select-none">
-                  {t("settings.expectedFormat")}
-                </summary>
-                <div className="mt-2 p-3 rounded-lg bg-lavenderDawn-overlay dark:bg-lavenderMoon-overlay border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
-                  <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mb-2">{t("settings.schemaHint")}</p>
-                  <pre className="text-[10px] leading-relaxed text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 overflow-x-auto">{JSON.stringify({
-  accounts: { "acct-id": { id: "acct-id", name: "My Checking", current_balance: 1500, type: "depository", subtype: "checking" } },
-  transactions: [{ id: "tx-1", accountId: "acct-id", description: "Coffee Shop", amount: -4.5, date: "2026-03-15", category: "Dining", status: "completed", merchant: "Starbucks" }],
-  budgets: { "2026-3": [{ category: "Groceries", limit: 500, spent: 320 }] },
-  spending: [{ category: "Groceries", amount: 320 }],
-  chart: { "acct-id": [{ date: "2026-01-01", balance: 1200 }] }
-}, null, 2)}</pre>
-                </div>
-              </details>
-            </div>
-          </Card>
           </div>
         </div>
       </div>

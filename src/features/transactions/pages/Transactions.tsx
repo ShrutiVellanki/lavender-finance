@@ -137,15 +137,16 @@ export default function Transactions() {
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-end gap-3">
-          <div className="sm:col-span-2 lg:flex-1 lg:max-w-xs">
-            <label className="block mb-1.5 text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("transactions.merchant")}</label>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:flex lg:items-end gap-2 sm:gap-3">
+          <div className="col-span-2 lg:flex-1">
+            <label className="hidden sm:block mb-1.5 text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("transactions.merchant")}</label>
             <Autocomplete
               fetchSuggestions={fetchMerchantSuggestions}
               getOptionLabel={(m: string) => m}
               onSelect={(m) => setSearchMerchant(m)}
               onClear={() => setSearchMerchant(null)}
               placeholder={t("transactions.searchMerchant")}
+              className="w-full"
             />
           </div>
           <Select
@@ -154,7 +155,8 @@ export default function Transactions() {
             onChange={(v) => setAccountFilter(v)}
             getOptionLabel={(o) => o === "all" ? "All Accounts" : (accounts[o]?.name ?? o)}
             label="Account"
-            className="w-full sm:w-44"
+            hideLabel
+            className="w-full lg:w-44"
           />
           <Select
             options={categoryOptions}
@@ -174,7 +176,8 @@ export default function Transactions() {
               </span>
             )}
             label="Category"
-            className="w-full sm:w-44"
+            hideLabel
+            className="w-full lg:w-44"
           />
           <Select
             options={statusOptions}
@@ -194,19 +197,69 @@ export default function Transactions() {
               </span>
             )}
             label="Status"
-            className="w-full sm:w-40"
+            hideLabel
+            className="w-full lg:w-40"
           />
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" className="self-end" onClick={clearAllFilters}>
+            <Button variant="ghost" size="sm" className="col-span-2 lg:col-span-1 self-end" onClick={clearAllFilters}>
               {t("transactions.clearFilters")}
             </Button>
           )}
         </div>
 
-        {/* Table */}
-        <Card className="overflow-hidden">
+        {/* Mobile card list */}
+        <div className="sm:hidden space-y-2">
+          {filtered.length === 0 ? (
+            <Card className="p-8 text-center text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("transactions.noMatches")}</Card>
+          ) : paginatedTx.map((tx) => (
+            <button
+              key={tx.id}
+              type="button"
+              onClick={() => setSelectedTx(tx)}
+              className="w-full text-left"
+            >
+              <Card className="px-4 py-3 active:scale-[0.99] transition-transform">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate">{tx.description}</p>
+                    <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-0.5">
+                      {tx.merchant} · {accounts[tx.accountId]?.name ?? tx.accountId}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className={`text-sm font-semibold tabular-nums ${tx.amount >= 0 ? "text-lavenderDawn-foam dark:text-lavenderMoon-foam" : "text-lavenderDawn-text dark:text-lavenderMoon-text"}`}>
+                      {tx.amount >= 0 ? "+" : ""}{formatCurrency(tx.amount)}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="default" icon={CATEGORY_ICON[tx.category]}>{tx.category}</Badge>
+                  <Badge variant={STATUS_VARIANT[tx.status]} icon={STATUS_ICON[tx.status]}>{tx.status}</Badge>
+                  <span className="ml-auto text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted tabular-nums">
+                    {new Date(tx.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                  </span>
+                </div>
+              </Card>
+            </button>
+          ))}
+          {filtered.length > 0 && (
+            <div className="flex flex-col items-center gap-2 pt-2">
+              <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">
+                {t("transactions.showing", {
+                  from: (currentPage - 1) * PAGE_SIZE + 1,
+                  to: Math.min(currentPage * PAGE_SIZE, filtered.length),
+                  total: filtered.length,
+                })}
+              </p>
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </div>
+          )}
+        </div>
+
+        {/* Desktop table */}
+        <Card className="overflow-hidden hidden sm:block">
           <div className="overflow-x-auto">
-            <table className="w-full text-sm min-w-[750px]">
+            <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
                   {["Description", "Account", "Category", "Date", "Status", "Amount"].map((h, i) => (
@@ -259,11 +312,7 @@ export default function Transactions() {
                   total: filtered.length,
                 })}
               </p>
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
           )}
         </Card>

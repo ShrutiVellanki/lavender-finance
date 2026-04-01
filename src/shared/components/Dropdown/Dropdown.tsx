@@ -21,6 +21,7 @@ export function Select<T>({
   label,
   renderOption,
   renderValue,
+  hideLabel = false,
   className,
 }: SelectProps<T>) {
   const isControlled = value !== undefined
@@ -128,7 +129,10 @@ export function Select<T>({
       {label && (
         <label
           htmlFor={`${listboxId}-button`}
-          className="block mb-1.5 text-[12px] font-medium text-muted-foreground"
+          className={cn(
+            "block mb-1.5 text-[12px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted",
+            hideLabel && "sr-only",
+          )}
         >
           {label}
         </label>
@@ -147,11 +151,14 @@ export function Select<T>({
         aria-haspopup="listbox"
         aria-activedescendant={activeDescendant}
         className={cn(
-          "w-full h-9 px-3 text-left text-[13px] rounded-lg border border-input bg-background",
+          "w-full h-9 px-3 text-left text-[13px] rounded-lg",
+          "border border-lavenderDawn-highlightMed/60 dark:border-lavenderMoon-highlightMed/60",
+          "bg-lavenderDawn-surface dark:bg-lavenderMoon-surface",
+          "text-lavenderDawn-text dark:text-lavenderMoon-text",
           "flex justify-between items-center",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 ring-offset-background",
+          "focus:outline-none focus:ring-2 focus:ring-lavenderDawn-iris/40 dark:focus:ring-lavenderMoon-iris/40",
           "disabled:opacity-50 disabled:cursor-not-allowed",
-          !selectedValue && "text-muted-foreground",
+          !selectedValue && "text-lavenderDawn-muted dark:text-lavenderMoon-muted",
         )}
       >
         <span className="truncate">
@@ -161,7 +168,7 @@ export function Select<T>({
         </span>
         <ChevronDown
           className={cn(
-            "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+            "h-4 w-4 shrink-0 text-lavenderDawn-muted dark:text-lavenderMoon-muted transition-transform",
             isOpen && "rotate-180",
           )}
         />
@@ -171,10 +178,10 @@ export function Select<T>({
         <ul
           id={listboxId}
           role="listbox"
-          className="absolute top-full left-0 right-0 mt-1 p-1 rounded-lg border border-border bg-popover shadow-md max-h-60 overflow-y-auto z-[1000]"
+          className="absolute top-full left-0 right-0 mt-1 p-1 rounded-lg border border-lavenderDawn-highlightMed/60 dark:border-lavenderMoon-highlightMed/60 bg-lavenderDawn-surface dark:bg-lavenderMoon-surface shadow-md max-h-60 overflow-y-auto z-[1000]"
         >
           {options.length === 0 && (
-            <li className="px-3 py-2 text-[13px] text-muted-foreground">
+            <li className="px-3 py-2 text-[13px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">
               No options available.
             </li>
           )}
@@ -199,9 +206,9 @@ export function Select<T>({
                 }}
                 className={cn(
                   "px-3 py-2 text-[13px] rounded-md cursor-pointer transition-colors",
-                  isHighlighted && "bg-accent text-accent-foreground",
+                  isHighlighted && "bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow text-lavenderDawn-text dark:text-lavenderMoon-text",
                   isSelected && "font-semibold",
-                  !isHighlighted && "text-popover-foreground",
+                  !isHighlighted && "text-lavenderDawn-text dark:text-lavenderMoon-text",
                 )}
               >
                 {renderOption

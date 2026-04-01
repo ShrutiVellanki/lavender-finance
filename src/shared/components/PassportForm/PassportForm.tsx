@@ -51,11 +51,11 @@ export default function PassportForm({ onSubmit, title = "Identity Verification"
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className={cn("max-w-[400px] space-y-5", className)}>
-      <h3 className="text-base font-medium text-foreground">{title}</h3>
+    <form onSubmit={handleSubmit} noValidate className={cn("max-w-[400px] mx-auto space-y-5", className)}>
+      <h3 className="text-base font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{title}</h3>
 
       <div className="space-y-1.5">
-        <label htmlFor="country" className="block text-[13px] font-medium text-foreground">Country</label>
+        <label htmlFor="country" className="block text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Country</label>
         <select
           id="country"
           value={country}
@@ -71,7 +71,7 @@ export default function PassportForm({ onSubmit, title = "Identity Verification"
       </div>
 
       <div className="space-y-1.5">
-        <label htmlFor="passport" className="block text-[13px] font-medium text-foreground">Government ID Number</label>
+        <label htmlFor="passport" className="block text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">Government ID Number</label>
         <input
           id="passport"
           type="text"
@@ -81,10 +81,10 @@ export default function PassportForm({ onSubmit, title = "Identity Verification"
           aria-invalid={showError ? "true" : "false"}
           aria-describedby={showError ? "passport-error" : undefined}
           placeholder={country === "USA" ? "123456789" : country === "Canada" ? "AB123456" : country === "UK" ? "A12BC34DE" : "Enter ID number"}
-          className={cn(inputCls, showError && "border-destructive focus:ring-destructive")}
-        />
+        className={cn(inputCls, showError && "border-rose-500 dark:border-rose-400 focus:ring-rose-500/40 dark:focus:ring-rose-400/40")}
+      />
         {showError && (
-          <p id="passport-error" role="alert" className="text-[12px] text-destructive mt-1">{error}</p>
+          <p id="passport-error" role="alert" className="text-[12px] text-rose-600 dark:text-rose-400 mt-1">{error}</p>
         )}
       </div>
 
@@ -93,11 +93,11 @@ export default function PassportForm({ onSubmit, title = "Identity Verification"
         disabled={!isValid}
         className={cn(
           "h-9 px-4 text-[13px] font-medium rounded-lg transition-all duration-150",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lavenderDawn-iris/40 dark:focus-visible:ring-lavenderMoon-iris/40",
           "active:scale-[0.98]",
           isValid
-            ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-            : "bg-muted text-muted-foreground cursor-not-allowed",
+            ? "bg-lavenderDawn-iris dark:bg-lavenderMoon-iris text-white shadow-sm hover:opacity-90"
+            : "bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow text-lavenderDawn-muted dark:text-lavenderMoon-muted cursor-not-allowed",
         )}
       >
         Verify Identity

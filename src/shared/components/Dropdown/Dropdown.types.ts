@@ -10,6 +10,8 @@ export type SelectProps<T> = {
   placeholder?: string
   disabled?: boolean
   label?: string
+  /** Visually hide the label (still accessible via aria-label) */
+  hideLabel?: boolean
   renderOption?: (
     option: T,
     state: { isSelected: boolean; isHighlighted: boolean },

@@ -77,7 +77,7 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
       <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
       {!isCollapsed && (
         <span className="text-[15px] font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text truncate">
-          Lavender
+          Lavender Finance
         </span>
       )}
     </Link>
