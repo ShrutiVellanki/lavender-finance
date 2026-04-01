@@ -60,4 +60,38 @@ export interface AccountFilters {
 export interface ChartOptions {
   timeScale: "1M" | "3M" | "6M" | "1Y" | "ALL";
   showIndividualAccounts: boolean;
-} 
+}
+
+export type TransactionCategory =
+  | "Groceries"
+  | "Dining"
+  | "Transport"
+  | "Shopping"
+  | "Utilities"
+  | "Income"
+  | "Transfer"
+  | "Entertainment"
+
+export type TransactionStatus = "completed" | "pending" | "failed"
+
+export interface Transaction {
+  id: string
+  accountId: string
+  description: string
+  amount: number
+  date: string
+  category: TransactionCategory
+  status: TransactionStatus
+  merchant: string
+}
+
+export interface BudgetCategory {
+  category: TransactionCategory
+  limit: number
+  spent: number
+}
+
+export interface SpendingSummary {
+  category: TransactionCategory
+  amount: number
+}

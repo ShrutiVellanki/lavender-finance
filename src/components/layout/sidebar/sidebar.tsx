@@ -10,7 +10,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Calculator,
-  CreditCard
+  CreditCard,
+  ArrowLeftRight,
 } from 'lucide-react';
 import { useTheme } from '@/theme-provider';
 
@@ -28,6 +29,8 @@ interface SidebarProps {
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Accounts', href: '/accounts', icon: Layers },
+  { name: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
+  { name: 'Budget', href: '/budget', icon: Calculator },
   { name: 'Cards', href: '/cards', icon: CreditCard },
 ];
 
@@ -107,29 +110,6 @@ export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
           );
         })}
 
-        <div
-          className={`flex items-center transition-all duration-200 cursor-not-allowed opacity-60 ${
-            isCollapsed 
-              ? 'justify-center' 
-              : 'px-3 py-2 rounded-lg'
-          } text-lavenderDawn-muted dark:text-lavenderMoon-muted`}
-        >
-          <div className={`flex items-center justify-center ${
-            isCollapsed 
-              ? 'w-10 h-10 rounded-full border border-transparent' 
-              : ''
-          }`}>
-            <Calculator className="w-5 h-5" />
-          </div>
-          {!isCollapsed && (
-            <div className="flex items-center justify-between flex-1">
-              <span className="text-[15px] font-medium ml-3">Budgeting</span>
-              <span className="text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 text-lavenderDawn-iris dark:text-lavenderMoon-iris">
-                Coming Soon
-              </span>
-            </div>
-          )}
-        </div>
       </nav>
 
       <div className={`border-t border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow ${isCollapsed ? 'p-3' : 'p-4'} space-y-2`}>

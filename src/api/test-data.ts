@@ -1,4 +1,4 @@
-import type { AccountData, ChartData } from "../types";
+import type { AccountData, ChartData, Transaction, BudgetCategory, SpendingSummary } from "../types";
 
 export const accountData: AccountData = {
   "182616478020197825": {
@@ -188,3 +188,83 @@ export const chartData: ChartData = {
     return { balance: prevBalance + dailyDepreciation + winterDepreciation };
   })
 };
+
+// ──────────────────────────── Transactions ────────────────────────────
+
+const merchants: Record<string, { category: Transaction["category"]; desc: string }> = {
+  "Whole Foods": { category: "Groceries", desc: "Whole Foods Market" },
+  "Trader Joe's": { category: "Groceries", desc: "Trader Joe's" },
+  "Costco": { category: "Groceries", desc: "Costco Wholesale" },
+  "Uber Eats": { category: "Dining", desc: "Uber Eats Order" },
+  "Chipotle": { category: "Dining", desc: "Chipotle Mexican Grill" },
+  "Starbucks": { category: "Dining", desc: "Starbucks Coffee" },
+  "Shell Gas": { category: "Transport", desc: "Shell Gas Station" },
+  "Uber": { category: "Transport", desc: "Uber Ride" },
+  "Lyft": { category: "Transport", desc: "Lyft Ride" },
+  "Amazon": { category: "Shopping", desc: "Amazon.com" },
+  "Target": { category: "Shopping", desc: "Target" },
+  "Nike": { category: "Shopping", desc: "Nike.com" },
+  "PG&E": { category: "Utilities", desc: "PG&E Electric" },
+  "Comcast": { category: "Utilities", desc: "Comcast Internet" },
+  "AT&T": { category: "Utilities", desc: "AT&T Wireless" },
+  "Netflix": { category: "Entertainment", desc: "Netflix Subscription" },
+  "Spotify": { category: "Entertainment", desc: "Spotify Premium" },
+  "AMC": { category: "Entertainment", desc: "AMC Theatres" },
+  "Employer": { category: "Income", desc: "Direct Deposit - Payroll" },
+  "Venmo": { category: "Transfer", desc: "Venmo Transfer" },
+};
+
+const merchantKeys = Object.keys(merchants);
+const accountIds = Object.keys(accountData);
+const statuses: Transaction["status"][] = ["completed", "completed", "completed", "completed", "pending", "failed"];
+
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+export const transactionData: Transaction[] = Array.from({ length: 50 }, (_, i) => {
+  const seed = i + 42;
+  const merchantKey = merchantKeys[Math.floor(seededRandom(seed) * merchantKeys.length)];
+  const { category, desc } = merchants[merchantKey];
+  const isIncome = category === "Income";
+  const isTransfer = category === "Transfer";
+  const baseAmount = isIncome
+    ? 2500 + seededRandom(seed + 1) * 3000
+    : isTransfer
+      ? 50 + seededRandom(seed + 1) * 450
+      : 5 + seededRandom(seed + 1) * 295;
+
+  const daysAgo = Math.floor(seededRandom(seed + 2) * 60);
+  const txDate = new Date();
+  txDate.setDate(txDate.getDate() - daysAgo);
+
+  return {
+    id: `tx-${String(i + 1).padStart(3, "0")}`,
+    accountId: accountIds[Math.floor(seededRandom(seed + 3) * 3)],
+    description: desc,
+    amount: isIncome ? Math.round(baseAmount * 100) / 100 : -Math.round(baseAmount * 100) / 100,
+    date: txDate.toISOString().split("T")[0],
+    category,
+    status: statuses[Math.floor(seededRandom(seed + 4) * statuses.length)],
+    merchant: merchantKey,
+  };
+}).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+// ──────────────────────────── Budgets ────────────────────────────
+
+export const budgetData: BudgetCategory[] = [
+  { category: "Groceries", limit: 600, spent: 482 },
+  { category: "Dining", limit: 300, spent: 267 },
+  { category: "Transport", limit: 200, spent: 153 },
+  { category: "Shopping", limit: 400, spent: 389 },
+  { category: "Utilities", limit: 350, spent: 312 },
+  { category: "Entertainment", limit: 150, spent: 142 },
+];
+
+// ──────────────────────── Spending Summary ────────────────────────
+
+export const spendingSummary: SpendingSummary[] = budgetData.map(b => ({
+  category: b.category,
+  amount: b.spent,
+}));
