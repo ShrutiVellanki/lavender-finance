@@ -1,13 +1,29 @@
-import React from "react";
-import { Loader2 } from "lucide-react";
+import React from "react"
+import { Loader2 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
-export function Loading() {
+interface LoadingProps {
+  message?: string
+  className?: string
+  fullScreen?: boolean
+}
+
+export function Loading({
+  message = "Loading...",
+  className,
+  fullScreen = true,
+}: LoadingProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-lavenderDawn-base dark:bg-lavenderMoon-base">
-      <Loader2 className="w-12 h-12 text-lavenderDawn-iris dark:text-lavenderMoon-iris animate-spin" />
-      <p className="mt-4 text-lg font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-        Loading your financial data...
-      </p>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center bg-background",
+        fullScreen && "min-h-screen",
+        !fullScreen && "py-12",
+        className,
+      )}
+    >
+      <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      <p className="mt-3 text-[14px] font-medium text-muted-foreground tracking-[-0.01em]">{message}</p>
     </div>
-  );
-} 
+  )
+}

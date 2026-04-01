@@ -95,3 +95,20 @@ export interface SpendingSummary {
   category: TransactionCategory
   amount: number
 }
+
+export interface UserSettings {
+  name: string
+  email: string
+  phone: string
+  avatar?: string
+}
+
+export interface CardEntry {
+  id: string
+  last4: string
+  network: "visa" | "mastercard" | "amex" | "discover" | "unknown"
+  name: string
+  expiry: string
+  accountId?: string
+  syncing?: boolean
+}

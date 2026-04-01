@@ -1,85 +1,187 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-lavenderMoon-base: #3E3E3E;
-  --color-lavenderMoon-surface: #2A2A2A;
-  --color-lavenderMoon-overlay: #3E3E3E;
-  --color-lavenderMoon-muted: #808080;
-  --color-lavenderMoon-subtle: #A3A3A3;
-  --color-lavenderMoon-text: #F8FAFC;
-  --color-lavenderMoon-love: #EF4444;
-  --color-lavenderMoon-gold: #F8FAFC;
-  --color-lavenderMoon-rose: #FB7185;
-  --color-lavenderMoon-pine: #0EA5E9;
-  --color-lavenderMoon-foam: #38BDF8;
-  --color-lavenderMoon-iris: #A78BFA;
-  --color-lavenderMoon-highlightLow: #4D4D4D;
-  --color-lavenderMoon-highlightMed: #666666;
-  --color-lavenderMoon-highlightHigh: #808080;
-  --color-lavenderDawn-base: #ffffff;
-  --color-lavenderDawn-surface: #fffaf3;
-  --color-lavenderDawn-overlay: #f5f5f4;
-  --color-lavenderDawn-muted: #797593;
-  --color-lavenderDawn-subtle: #655e7e;
-  --color-lavenderDawn-text: #4a4458;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+
+  /* ── Lavender Dawn (light) ── */
+  --color-lavenderDawn-base: #fafafc;
+  --color-lavenderDawn-surface: #ffffff;
+  --color-lavenderDawn-overlay: #f3f2f7;
+  --color-lavenderDawn-muted: #9893a5;
+  --color-lavenderDawn-subtle: #797593;
+  --color-lavenderDawn-text: #575279;
   --color-lavenderDawn-love: #b4637a;
   --color-lavenderDawn-gold: #ea9d34;
   --color-lavenderDawn-rose: #d7827e;
   --color-lavenderDawn-pine: #286983;
   --color-lavenderDawn-foam: #56949f;
-  --color-lavenderDawn-iris: #575279;
-  --color-lavenderDawn-highlightLow: #f4ede8;
-  --color-lavenderDawn-highlightMed: #cbd5e1;
-  --color-lavenderDawn-highlightHigh: #94a3b8;
-  --color-border: var(--color-lavenderMoon-base);
-  --color-input: var(--color-lavenderMoon-surface);
-  --color-ring: var(--color-lavenderMoon-overlay);
-  --color-background: var(--color-lavenderMoon-surface);
-  --color-foreground: var(--color-lavenderMoon-text);
-  --color-primary: var(--color-lavenderMoon-love);
-  --color-primary-foreground: var(--color-lavenderMoon-text);
-  --color-secondary: var(--color-lavenderDawn-surface);
+  --color-lavenderDawn-iris: #907aa9;
+  --color-lavenderDawn-highlightLow: #efeef5;
+  --color-lavenderDawn-highlightMed: #dfdee8;
+  --color-lavenderDawn-highlightHigh: #d0cfd9;
+
+  /* ── Lavender Moon (soft dark) ── */
+  --color-lavenderMoon-base: #1e1e2e;
+  --color-lavenderMoon-surface: #262639;
+  --color-lavenderMoon-overlay: #2f2f44;
+  --color-lavenderMoon-muted: #6e6c88;
+  --color-lavenderMoon-subtle: #8e8ca6;
+  --color-lavenderMoon-text: #cdcce0;
+  --color-lavenderMoon-love: #d4708a;
+  --color-lavenderMoon-gold: #d9ae6e;
+  --color-lavenderMoon-rose: #d29290;
+  --color-lavenderMoon-pine: #3a84a4;
+  --color-lavenderMoon-foam: #89bcc6;
+  --color-lavenderMoon-iris: #af9ad2;
+  --color-lavenderMoon-highlightLow: #282842;
+  --color-lavenderMoon-highlightMed: #3a3a54;
+  --color-lavenderMoon-highlightHigh: #4c4c65;
+
+  /* ── Semantic tokens ── */
+  --color-background: var(--color-lavenderDawn-base);
+  --color-foreground: var(--color-lavenderDawn-text);
+  --color-border: var(--color-lavenderDawn-highlightMed);
+  --color-input: var(--color-lavenderDawn-highlightMed);
+  --color-ring: var(--color-lavenderDawn-iris);
+  --color-primary: var(--color-lavenderDawn-iris);
+  --color-primary-foreground: #ffffff;
+  --color-secondary: var(--color-lavenderDawn-highlightLow);
   --color-secondary-foreground: var(--color-lavenderDawn-text);
-  --color-destructive: var(--color-lavenderMoon-rose);
-  --color-destructive-foreground: var(--color-lavenderDawn-base);
-  --color-muted: var(--color-lavenderMoon-muted);
-  --color-muted-foreground: var(--color-lavenderMoon-subtle);
-  --color-accent: var(--color-lavenderMoon-gold);
-  --color-accent-foreground: var(--color-lavenderMoon-text);
-  --color-popover: var(--color-lavenderDawn-overlay);
+  --color-destructive: var(--color-lavenderDawn-love);
+  --color-destructive-foreground: #ffffff;
+  --color-muted: var(--color-lavenderDawn-highlightLow);
+  --color-muted-foreground: var(--color-lavenderDawn-muted);
+  --color-accent: var(--color-lavenderDawn-highlightLow);
+  --color-accent-foreground: var(--color-lavenderDawn-text);
+  --color-popover: var(--color-lavenderDawn-surface);
   --color-popover-foreground: var(--color-lavenderDawn-text);
-  --color-card: var(--color-lavenderDawn-base);
+  --color-card: var(--color-lavenderDawn-surface);
   --color-card-foreground: var(--color-lavenderDawn-text);
-  --radius-lg: 8px;
-  --radius-md: 6px;
-  --radius-sm: 4px;
+
+  --color-chart-1: var(--color-lavenderDawn-iris);
+  --color-chart-2: var(--color-lavenderDawn-foam);
+  --color-chart-3: var(--color-lavenderDawn-pine);
+  --color-chart-4: var(--color-lavenderDawn-gold);
+  --color-chart-5: var(--color-lavenderDawn-rose);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+[data-theme="dark"] {
+  --color-background: var(--color-lavenderMoon-base);
+  --color-foreground: var(--color-lavenderMoon-text);
+  --color-border: var(--color-lavenderMoon-highlightMed);
+  --color-input: var(--color-lavenderMoon-highlightMed);
+  --color-ring: var(--color-lavenderMoon-iris);
+  --color-primary: var(--color-lavenderMoon-iris);
+  --color-primary-foreground: var(--color-lavenderMoon-base);
+  --color-secondary: var(--color-lavenderMoon-highlightLow);
+  --color-secondary-foreground: var(--color-lavenderMoon-text);
+  --color-destructive: var(--color-lavenderMoon-love);
+  --color-destructive-foreground: var(--color-lavenderMoon-text);
+  --color-muted: var(--color-lavenderMoon-highlightLow);
+  --color-muted-foreground: var(--color-lavenderMoon-muted);
+  --color-accent: var(--color-lavenderMoon-highlightLow);
+  --color-accent-foreground: var(--color-lavenderMoon-text);
+  --color-popover: var(--color-lavenderMoon-surface);
+  --color-popover-foreground: var(--color-lavenderMoon-text);
+  --color-card: var(--color-lavenderMoon-surface);
+  --color-card-foreground: var(--color-lavenderMoon-text);
+  --color-chart-1: var(--color-lavenderMoon-iris);
+  --color-chart-2: var(--color-lavenderMoon-foam);
+  --color-chart-3: var(--color-lavenderMoon-pine);
+  --color-chart-4: var(--color-lavenderMoon-gold);
+  --color-chart-5: var(--color-lavenderMoon-rose);
+}
+
 @layer base {}
 
-/* 3D card transform utilities */
+/* ── Professional base styles ── */
+*,
+*::before,
+*::after {
+  border-color: var(--color-border);
+}
+
+::selection {
+  background: var(--color-lavenderDawn-iris);
+  color: white;
+}
+
+[data-theme="dark"] ::selection {
+  background: var(--color-lavenderMoon-iris);
+  color: var(--color-lavenderMoon-base);
+}
+
+html {
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: var(--color-lavenderDawn-base);
+  color: var(--color-lavenderDawn-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  line-height: 1.6;
+  letter-spacing: -0.011em;
+}
+
+[data-theme="dark"] body {
+  background: var(--color-lavenderMoon-base);
+  color: var(--color-lavenderMoon-text);
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-lavenderDawn-highlightMed);
+  border-radius: 100px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-lavenderDawn-highlightHigh);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-lavenderMoon-highlightMed);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-lavenderMoon-highlightHigh);
+}
+
+/* ── Tabular figures for financial data ── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 3D card transform utilities ── */
 .perspective-1000 {
   perspective: 1000px;
 }
-
 .backface-hidden {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ── Focus ring reset ── */
+:focus-visible {
+  outline: 2px solid var(--color-lavenderDawn-iris);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+[data-theme="dark"] :focus-visible {
+  outline-color: var(--color-lavenderMoon-iris);
 }

@@ -1,4 +1,7 @@
 import React from "react"
+import { cn } from "@/lib/utils"
+
+type ProgressBarVariant = "default" | "success" | "warning" | "danger"
 
 interface ProgressBarProps {
   value: number
@@ -6,7 +9,30 @@ interface ProgressBarProps {
   label?: string
   showValue?: boolean
   valueFormatter?: (value: number, max: number) => string
+  variant?: ProgressBarVariant
   autoVariant?: boolean
+  size?: "sm" | "default" | "lg"
+  className?: string
+}
+
+const variantColors: Record<ProgressBarVariant, string> = {
+  default: "bg-primary",
+  success: "bg-[#56949f] dark:bg-[#9ccfd8]",
+  warning: "bg-[#ea9d34] dark:bg-[#f6c177]",
+  danger: "bg-destructive",
+}
+
+function resolveVariant(value: number, max: number): ProgressBarVariant {
+  const pct = (value / max) * 100
+  if (pct >= 90) return "danger"
+  if (pct >= 75) return "warning"
+  return "success"
+}
+
+const sizeClasses: Record<string, string> = {
+  sm: "h-1.5",
+  default: "h-1.5",
+  lg: "h-4",
 }
 
 export function ProgressBar({
@@ -15,40 +41,38 @@ export function ProgressBar({
   label,
   showValue = true,
   valueFormatter,
+  variant = "default",
   autoVariant = false,
+  size = "default",
+  className,
 }: ProgressBarProps) {
   const clamped = Math.min(Math.max(value, 0), max)
   const pct = max > 0 ? (clamped / max) * 100 : 0
+  const resolvedVariant = autoVariant ? resolveVariant(clamped, max) : variant
 
   const formatted = valueFormatter
     ? valueFormatter(clamped, max)
     : `${Math.round(pct)}%`
 
-  let barColor = "bg-lavenderDawn-iris dark:bg-lavenderMoon-iris"
-  if (autoVariant) {
-    if (pct >= 90) barColor = "bg-lavenderDawn-love dark:bg-lavenderMoon-love"
-    else if (pct >= 75) barColor = "bg-lavenderDawn-gold dark:bg-lavenderMoon-gold"
-    else barColor = "bg-lavenderDawn-foam dark:bg-lavenderMoon-foam"
-  }
-
   return (
-    <div className="w-full">
+    <div className={cn("w-full", className)}>
       {(label || showValue) && (
         <div className="flex items-center justify-between mb-1.5">
           {label && (
-            <span className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">
-              {label}
-            </span>
+            <span className="text-[13px] font-medium text-foreground tracking-[-0.01em]">{label}</span>
           )}
           {showValue && (
-            <span className="text-xs tabular-nums text-lavenderDawn-muted dark:text-lavenderMoon-muted">
+            <span className="text-[12px] tabular-nums text-muted-foreground">
               {formatted}
             </span>
           )}
         </div>
       )}
       <div
-        className="w-full h-2 rounded-full bg-lavenderDawn-highlightLow dark:bg-lavenderMoon-highlightLow overflow-hidden"
+        className={cn(
+          "w-full rounded-full bg-muted overflow-hidden",
+          sizeClasses[size],
+        )}
         role="progressbar"
         aria-valuenow={clamped}
         aria-valuemin={0}
@@ -56,7 +80,10 @@ export function ProgressBar({
         aria-label={label}
       >
         <div
-          className={`h-full rounded-full transition-all duration-500 ease-out ${barColor}`}
+          className={cn(
+            "h-full rounded-full transition-all duration-500 ease-out",
+            variantColors[resolvedVariant],
+          )}
           style={{ width: `${pct}%` }}
         />
       </div>

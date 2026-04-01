@@ -1,4 +1,4 @@
-import type { AccountData, ChartData, Transaction, BudgetCategory, SpendingSummary } from "../types";
+import type { AccountData, ChartData, Transaction, BudgetCategory, SpendingSummary, UserSettings } from "../types";
 
 export const accountData: AccountData = {
   "182616478020197825": {
@@ -253,14 +253,29 @@ export const transactionData: Transaction[] = Array.from({ length: 50 }, (_, i) 
 
 // ──────────────────────────── Budgets ────────────────────────────
 
-export const budgetData: BudgetCategory[] = [
-  { category: "Groceries", limit: 600, spent: 482 },
-  { category: "Dining", limit: 300, spent: 267 },
-  { category: "Transport", limit: 200, spent: 153 },
-  { category: "Shopping", limit: 400, spent: 389 },
-  { category: "Utilities", limit: 350, spent: 312 },
-  { category: "Entertainment", limit: 150, spent: 142 },
+const budgetLimits: { category: BudgetCategory["category"]; limit: number }[] = [
+  { category: "Groceries", limit: 600 },
+  { category: "Dining", limit: 300 },
+  { category: "Transport", limit: 200 },
+  { category: "Shopping", limit: 400 },
+  { category: "Utilities", limit: 350 },
+  { category: "Entertainment", limit: 150 },
 ];
+
+function generateMonthlyBudgets(): Record<number, BudgetCategory[]> {
+  const result: Record<number, BudgetCategory[]> = {};
+  for (let month = 0; month < 12; month++) {
+    result[month] = budgetLimits.map(({ category, limit }) => {
+      const seed = month * 100 + limit;
+      const ratio = 0.55 + seededRandom(seed) * 0.5;
+      return { category, limit, spent: Math.round(limit * ratio) };
+    });
+  }
+  return result;
+}
+
+export const budgetsByMonth = generateMonthlyBudgets();
+export const budgetData: BudgetCategory[] = budgetsByMonth[new Date().getMonth()];
 
 // ──────────────────────── Spending Summary ────────────────────────
 
@@ -268,3 +283,11 @@ export const spendingSummary: SpendingSummary[] = budgetData.map(b => ({
   category: b.category,
   amount: b.spent,
 }));
+
+// ──────────────────────── User Settings ────────────────────────
+
+export const userSettings: UserSettings = {
+  name: "Shruti Vellanki",
+  email: "shruti@lavenderfinance.com",
+  phone: "+1 (555) 867-4832",
+};

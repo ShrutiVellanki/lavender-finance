@@ -1,37 +1,30 @@
-import { useTheme } from "@/theme-provider";
 import { PiggyBank } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function NotFound() {
-  const { theme } = useTheme();
-
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen flex items-center justify-center bg-lavenderDawn-base dark:bg-lavenderMoon-base">
-      <div className="text-center space-y-8">
-        <div className="relative">
-          <div className="animate-bounce">
-            <div className="relative animate-wiggle">
-              <PiggyBank className="w-24 h-24 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-lavenderDawn-iris dark:bg-lavenderMoon-iris rounded-full animate-blink" />
-            </div>
+      <div className="text-center space-y-6">
+        <div className="flex justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 flex items-center justify-center">
+            <PiggyBank className="w-8 h-8 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
           </div>
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-12 h-3 bg-lavenderDawn-iris/20 dark:bg-lavenderMoon-iris/20 rounded-full blur-sm animate-shadow" />
         </div>
-        
         <div className="space-y-2">
-          <h1 className="text-4xl font-bold text-lavenderDawn-text dark:text-lavenderMoon-text">
-            Oops! Page Not Found
+          <h1 className="text-2xl font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text">
+            {t("notFound.title")}
           </h1>
-          <p className="text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70">
-            Looks like this piggy bank is empty! Let's head back home.
+          <p className="text-[14px] text-lavenderDawn-muted dark:text-lavenderMoon-muted max-w-sm mx-auto">
+            {t("notFound.description")}
           </p>
         </div>
-
-        <Link 
+        <Link
           to="/"
-          className="inline-block px-6 py-3 text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 hover:bg-lavenderDawn-iris/20 dark:hover:bg-lavenderMoon-iris/20 rounded-lg transition-colors"
+          className="inline-flex items-center h-9 px-4 text-[13px] font-medium rounded-lg bg-lavenderDawn-iris text-white dark:bg-lavenderMoon-iris dark:text-lavenderMoon-base shadow-sm hover:opacity-90 active:scale-[0.98] transition-all duration-150"
         >
-          Return Home
+          {t("notFound.returnHome")}
         </Link>
       </div>
     </div>

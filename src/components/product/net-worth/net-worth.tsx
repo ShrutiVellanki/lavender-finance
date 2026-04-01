@@ -76,10 +76,10 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
 
   // Chart styling
   const chartColor = isDark ? "#575279" : "#575279";
-  const gridColor = isDark ? "#6e6a86" : "#f4ede8";
-  const textColor = isDark ? "#faf4ed" : "#4a4458";
-  const tooltipBgColor = isDark ? "#1c1c1c" : "#fffaf3";
-  const tooltipBorderColor = isDark ? "#2a2a2a" : "#f4ede8";
+  const gridColor = isDark ? "#44415a" : "#efeef5";
+  const textColor = isDark ? "#e0def4" : "#575279";
+  const tooltipBgColor = isDark ? "#2a273f" : "#ffffff";
+  const tooltipBorderColor = isDark ? "#44415a" : "#dfdee8";
 
   // Custom tooltip component
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -261,12 +261,12 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
               />
               <Tooltip 
                 content={<CustomTooltip />}
-                cursor={{ stroke: isDark ? "#9893a5" : "#797593", strokeWidth: 1 }}
+                cursor={{ stroke: isDark ? "#908caa" : "#9893a5", strokeWidth: 1 }}
               />
               <Area
                 type="monotone"
                 dataKey="balance"
-                stroke={isDark ? "#9893a5" : "#797593"}
+                stroke={isDark ? "#908caa" : "#9893a5"}
                 fillOpacity={1}
                 fill="url(#colorNetWorth)"
               />

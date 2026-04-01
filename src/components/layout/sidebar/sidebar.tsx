@@ -5,18 +5,19 @@ import {
   Layers,
   PiggyBank,
   User,
-  Sun,
-  Moon,
   ChevronLeft,
   ChevronRight,
   Calculator,
   CreditCard,
   ArrowLeftRight,
+  Settings,
 } from 'lucide-react';
-import { useTheme } from '@/theme-provider';
+import { ThemeSwitcher } from '@/components/ui/theme-switcher';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import { useTranslation } from 'react-i18next';
 
 interface NavItem {
-  name: string;
+  nameKey: string;
   href: string;
   icon: React.ElementType;
 }
@@ -24,131 +25,122 @@ interface NavItem {
 interface SidebarProps {
   isCollapsed: boolean;
   onCollapsedChange: (collapsed: boolean) => void;
+  onNavigate?: () => void;
 }
 
 const navItems: NavItem[] = [
-  { name: 'Dashboard', href: '/', icon: Home },
-  { name: 'Accounts', href: '/accounts', icon: Layers },
-  { name: 'Transactions', href: '/transactions', icon: ArrowLeftRight },
-  { name: 'Budget', href: '/budget', icon: Calculator },
-  { name: 'Cards', href: '/cards', icon: CreditCard },
+  { nameKey: 'nav.dashboard', href: '/', icon: Home },
+  { nameKey: 'nav.accounts', href: '/accounts', icon: Layers },
+  { nameKey: 'nav.transactions', href: '/transactions', icon: ArrowLeftRight },
+  { nameKey: 'nav.budget', href: '/budget', icon: Calculator },
+  { nameKey: 'nav.cards', href: '/cards', icon: CreditCard },
 ];
 
-export const Sidebar = ({ isCollapsed, onCollapsedChange }: SidebarProps) => {
+export const Sidebar = ({ isCollapsed, onCollapsedChange, onNavigate }: SidebarProps) => {
   const { pathname } = useLocation();
-  const { theme, setTheme } = useTheme();
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
+  const { t, i18n } = useTranslation();
 
   return (
-    <aside 
-      className={`fixed inset-y-0 left-0 flex flex-col bg-white dark:bg-lavenderMoon-surface border-r border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow text-lavenderDawn-text dark:text-lavenderMoon-text transition-all duration-300 ${isCollapsed ? 'w-16' : 'w-60'}`}
+    <aside
+      className={`fixed inset-y-0 left-0 z-30 flex flex-col border-r transition-all duration-300 ease-in-out
+        bg-lavenderDawn-surface dark:bg-lavenderMoon-surface
+        border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed
+        ${isCollapsed ? 'w-[60px]' : 'w-[240px]'}`}
     >
-      <div className={`h-14 flex items-center ${isCollapsed ? 'justify-center px-0' : 'justify-between px-4'} border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow`}>
-        <div className={`relative group flex items-center ${isCollapsed ? 'w-10' : ''}`}>
-          <div className={`flex items-center ${isCollapsed ? 'justify-center w-full' : ''}`}>
-            <div className={`relative flex items-center justify-center ${isCollapsed ? 'w-10 h-10' : ''}`}>
-              <PiggyBank className={`w-5 h-5 text-lavenderDawn-iris dark:text-lavenderMoon-iris transition-opacity duration-200 ${isCollapsed ? 'group-hover:opacity-0' : ''}`} />
-              {isCollapsed && (
-                <button 
-                  onClick={() => onCollapsedChange(!isCollapsed)}
-                  className="absolute inset-0 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 border border-transparent group-hover:border-lavenderDawn-iris/20 dark:group-hover:border-lavenderMoon-iris/20 transition-all duration-200"
-                >
-                  <ChevronRight className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
-                </button>
-              )}
-            </div>
-            {!isCollapsed && (
-              <span className="text-base font-semibold tracking-tight text-lavenderDawn-text dark:text-lavenderMoon-text ml-2">
-                Lavender
-              </span>
-            )}
-          </div>
-        </div>
+      {/* Brand */}
+      <div className={`h-[56px] flex items-center shrink-0 border-b border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed ${isCollapsed ? 'justify-center' : 'justify-between px-5'}`}>
+        <Link to="/" className="flex items-center gap-2.5 min-w-0">
+          <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+          {!isCollapsed && (
+            <span className="text-[15px] font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text truncate">
+              Lavender
+            </span>
+          )}
+        </Link>
         {!isCollapsed && (
-          <button 
+          <button
             onClick={() => onCollapsedChange(true)}
-            className="w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 border border-transparent hover:border-lavenderDawn-iris/20 dark:hover:border-lavenderMoon-iris/20"
+            className="w-7 h-7 flex items-center justify-center rounded-md text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text hover:bg-lavenderDawn-highlightLow dark:hover:bg-lavenderMoon-highlightLow transition-colors"
           >
-            <ChevronLeft className="w-4 h-4 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        )}
+        {isCollapsed && (
+          <button
+            onClick={() => onCollapsedChange(false)}
+            className="absolute -right-3 top-4 w-6 h-6 flex items-center justify-center rounded-full bg-lavenderDawn-surface dark:bg-lavenderMoon-surface border border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed shadow-sm text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris transition-colors opacity-0 hover:opacity-100 group-hover:opacity-100"
+            style={{ opacity: undefined }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '0')}
+          >
+            <ChevronRight className="w-3 h-3" />
           </button>
         )}
       </div>
 
-      <nav className={`flex-1 overflow-y-auto ${isCollapsed ? 'px-3' : 'px-2'} py-4 space-y-1`}>
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`flex items-center transition-all duration-200 ${
-                isCollapsed 
-                  ? 'justify-center' 
-                  : 'px-3 py-2 rounded-lg hover:bg-lavenderDawn-iris/10 dark:hover:bg-lavenderMoon-iris/10'
-              } ${
-                isActive 
-                  ? isCollapsed 
-                    ? 'text-lavenderDawn-iris dark:text-lavenderMoon-iris' 
-                    : 'bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 text-lavenderDawn-iris dark:text-lavenderMoon-iris rounded-lg'
-                  : 'text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris'
-              }`}
-            >
-              <div className={`flex items-center justify-center ${
-                isCollapsed 
-                  ? 'w-10 h-10 rounded-full border border-transparent hover:border-lavenderDawn-iris/20 dark:hover:border-lavenderMoon-iris/20' 
-                  : ''
-              }`}>
-                <Icon className="w-5 h-5" />
-              </div>
-              {!isCollapsed && <span className="text-[15px] font-medium ml-3">{item.name}</span>}
-            </Link>
-          );
-        })}
+      {/* Navigation */}
+      <nav className={`flex-1 overflow-y-auto py-3 ${isCollapsed ? 'px-2' : 'px-3'}`}>
+        <div className="space-y-0.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
 
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                title={isCollapsed ? t(item.nameKey) : undefined}
+                onClick={onNavigate}
+                className={`group flex items-center gap-3 rounded-lg transition-all duration-150
+                  ${isCollapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2'}
+                  ${isActive
+                    ? 'bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10 text-lavenderDawn-iris dark:text-lavenderMoon-iris font-medium'
+                    : 'text-lavenderDawn-subtle dark:text-lavenderMoon-subtle hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text hover:bg-lavenderDawn-highlightLow/60 dark:hover:bg-lavenderMoon-highlightLow/60'
+                  }`}
+              >
+                <Icon className={`w-[18px] h-[18px] shrink-0 ${isActive ? '' : 'opacity-70 group-hover:opacity-100'} transition-opacity`} />
+                {!isCollapsed && <span className="text-[13px] tracking-[-0.01em]">{t(item.nameKey)}</span>}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
 
-      <div className={`border-t border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow ${isCollapsed ? 'p-3' : 'p-4'} space-y-2`}>
-        <button 
-          onClick={toggleTheme}
-          className={`flex items-center transition-all duration-200 ${
-            isCollapsed 
-              ? 'justify-center' 
-              : 'w-full px-3 py-2 rounded-lg hover:bg-lavenderDawn-iris/10 dark:hover:bg-lavenderMoon-iris/10'
-          } text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris`}
+      {/* Footer */}
+      <div className={`border-t border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed ${isCollapsed ? 'p-2' : 'p-3'} space-y-1`}>
+        <ThemeSwitcher collapsed={isCollapsed} />
+        <LanguageSwitcher collapsed={isCollapsed} currentLanguage={i18n.language} onLanguageChange={(code) => i18n.changeLanguage(code)} />
+        <Link
+          to="/settings"
+          onClick={onNavigate}
+          title={isCollapsed ? t("nav.settings") : undefined}
+          className={`flex items-center gap-3 rounded-lg transition-colors ${isCollapsed ? 'justify-center py-2' : 'px-3 py-2'} ${
+            pathname === '/settings'
+              ? 'bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10'
+              : 'hover:bg-lavenderDawn-highlightLow/60 dark:hover:bg-lavenderMoon-highlightLow/60'
+          }`}
         >
-          <div className={`flex items-center justify-center ${
-            isCollapsed 
-              ? 'w-10 h-10 rounded-full border border-transparent hover:border-lavenderDawn-iris/20 dark:hover:border-lavenderMoon-iris/20' 
-              : ''
+          <div className={`w-[26px] h-[26px] rounded-full flex items-center justify-center shrink-0 ${
+            pathname === '/settings'
+              ? 'bg-lavenderDawn-iris/20 dark:bg-lavenderMoon-iris/20 ring-1 ring-lavenderDawn-iris/30 dark:ring-lavenderMoon-iris/30'
+              : 'bg-lavenderDawn-iris/15 dark:bg-lavenderMoon-iris/15'
           }`}>
-            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <User className="w-3.5 h-3.5 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
           </div>
           {!isCollapsed && (
-            <span className="text-[15px] font-medium ml-3">
-              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-[13px] font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate tracking-[-0.01em]">Shruti Vellanki</p>
+              <p className="text-[11px] text-lavenderDawn-muted dark:text-lavenderMoon-muted truncate">{t("common.personal")}</p>
+            </div>
           )}
-        </button>
-        
-        <button className={`flex items-center transition-all duration-200 ${
-          isCollapsed 
-            ? 'justify-center' 
-            : 'w-full px-3 py-2 rounded-lg hover:bg-lavenderDawn-iris/10 dark:hover:bg-lavenderMoon-iris/10'
-        } text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris`}>
-          <div className={`flex items-center justify-center ${
-            isCollapsed 
-              ? 'w-10 h-10 rounded-full border border-transparent hover:border-lavenderDawn-iris/20 dark:hover:border-lavenderMoon-iris/20' 
-              : ''
-          }`}>
-            <User className="w-5 h-5" />
-          </div>
-          {!isCollapsed && <span className="text-[15px] font-medium ml-3">Shruti Vellanki</span>}
-        </button>
+          {!isCollapsed && (
+            <Settings className={`w-3.5 h-3.5 shrink-0 ${
+              pathname === '/settings'
+                ? 'text-lavenderDawn-iris dark:text-lavenderMoon-iris'
+                : 'text-lavenderDawn-muted dark:text-lavenderMoon-muted'
+            }`} />
+          )}
+        </Link>
       </div>
     </aside>
   );

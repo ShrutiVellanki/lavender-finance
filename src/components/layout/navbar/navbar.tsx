@@ -1,5 +1,5 @@
 import type React from "react";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcher } from "@/components/ui/theme-switcher";
 import { PiggyBank, Menu, X } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { useState } from "react";

@@ -4,6 +4,7 @@ import { accountSubtypeLabels } from "@/constants/account-constants";
 import { Link } from "react-router-dom";
 
 export interface AccountInfoProps {
+  id?: string;
   name: string;
   balance?: number;
   description?: string;
@@ -12,6 +13,7 @@ export interface AccountInfoProps {
 }
 
 export const AccountInfo: React.FC<AccountInfoProps> = ({
+  id,
   name,
   balance,
   description,
@@ -22,7 +24,7 @@ export const AccountInfo: React.FC<AccountInfoProps> = ({
   
   return (
     <Link 
-      to="/not-found"
+      to={id ? `/accounts/${id}` : "#"}
       className={`w-full flex items-center justify-between p-4 cursor-pointer hover:bg-lavenderDawn-highlightLow dark:hover:bg-lavenderMoon-highlightMed transition-all duration-200 rounded-lg hover:translate-x-1 ${className || ''}`}
     >
       <div className="flex items-center space-x-4">
