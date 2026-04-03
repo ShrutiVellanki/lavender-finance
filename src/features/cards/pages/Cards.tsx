@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
-type Step = "list" | "detail" | "verify-identity" | "verify-pin" | "add-card" | "done";
+type Step = "list" | "verify-identity" | "verify-pin" | "add-card" | "done";
 
 function maskPhone(phone: string): string {
   const digits = phone.replace(/\D/g, "");
@@ -118,11 +118,10 @@ export default function CardsPage() {
     setPendingCardData(null);
   }
 
-  const isInFlow = step !== "list" && step !== "done" && step !== "detail";
+  const isInFlow = step !== "list" && step !== "done";
 
   function openCardDetail(card: CardEntry) {
     setSelectedCard(card);
-    setStep("detail");
   }
 
   function deleteCard() {
@@ -131,7 +130,6 @@ export default function CardsPage() {
     setCards((prev) => prev.filter((c) => c.id !== selectedCard.id));
     setShowDeleteModal(false);
     setSelectedCard(null);
-    setStep("list");
   }
 
   if (loading) return <CardsSkeleton />;
@@ -211,74 +209,6 @@ export default function CardsPage() {
                 </div>
               </Card>
             )}
-          </>
-        )}
-
-        {/* ─── CARD DETAIL VIEW ─── */}
-        {step === "detail" && selectedCard && (
-          <>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => { setStep("list"); setSelectedCard(null); }}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                {t("cards.backToCards")}
-              </button>
-            </div>
-
-            <div className="max-w-md mx-auto space-y-6">
-              <CreditCardDisplay
-                data={{
-                  number: `•••• •••• •••• ${selectedCard.last4}`,
-                  name: selectedCard.name,
-                  expiry: selectedCard.expiry,
-                  cvv: "",
-                }}
-                flipped={false}
-              />
-
-              <Card className="divide-y divide-lavenderDawn-highlightLow dark:divide-lavenderMoon-highlightLow">
-                <div className="px-5 py-4 flex items-center gap-3">
-                  <UserIcon className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.cardHolder")}</p>
-                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate">{selectedCard.name}</p>
-                  </div>
-                </div>
-                <div className="px-5 py-4 flex items-center gap-3">
-                  <Hash className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.cardNumber")}</p>
-                    <p className="text-sm font-mono text-lavenderDawn-text dark:text-lavenderMoon-text">•••• •••• •••• {selectedCard.last4}</p>
-                  </div>
-                </div>
-                <div className="px-5 py-4 flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.expiry")}</p>
-                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{selectedCard.expiry}</p>
-                  </div>
-                </div>
-                <div className="px-5 py-4 flex items-center gap-3">
-                  <Wifi className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.network")}</p>
-                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text capitalize">{selectedCard.network}</p>
-                  </div>
-                </div>
-              </Card>
-
-              <Button
-                variant="destructive"
-                className="w-full gap-2"
-                onClick={() => setShowDeleteModal(true)}
-              >
-                <Trash2 className="w-4 h-4" />
-                {t("cards.deleteCard")}
-              </Button>
-            </div>
           </>
         )}
 
@@ -369,6 +299,68 @@ export default function CardsPage() {
             </div>
           </div>
         )}
+
+        {/* Card Detail Modal */}
+        <Modal
+          open={!!selectedCard && !showDeleteModal}
+          onClose={() => setSelectedCard(null)}
+          title={t("cards.cardDetails") || "Card Details"}
+          contentClassName="max-w-lg"
+        >
+          {selectedCard && (
+            <div className="space-y-5">
+              <CreditCardDisplay
+                data={{
+                  number: `•••• •••• •••• ${selectedCard.last4}`,
+                  name: selectedCard.name,
+                  expiry: selectedCard.expiry,
+                  cvv: "",
+                }}
+                flipped={false}
+              />
+
+              <div className="divide-y divide-lavenderDawn-highlightLow dark:divide-lavenderMoon-highlightLow rounded-lg border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
+                <div className="px-4 py-3 flex items-center gap-3">
+                  <UserIcon className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.cardHolder")}</p>
+                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text truncate">{selectedCard.name}</p>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex items-center gap-3">
+                  <Hash className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.cardNumber")}</p>
+                    <p className="text-sm font-mono text-lavenderDawn-text dark:text-lavenderMoon-text">•••• •••• •••• {selectedCard.last4}</p>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex items-center gap-3">
+                  <Calendar className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.expiry")}</p>
+                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{selectedCard.expiry}</p>
+                  </div>
+                </div>
+                <div className="px-4 py-3 flex items-center gap-3">
+                  <Wifi className="w-4 h-4 text-lavenderDawn-muted dark:text-lavenderMoon-muted shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[11px] font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("cards.network")}</p>
+                    <p className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text capitalize">{selectedCard.network}</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button
+                variant="destructive"
+                className="w-full gap-2"
+                onClick={() => setShowDeleteModal(true)}
+              >
+                <Trash2 className="w-4 h-4" />
+                {t("cards.deleteCard")}
+              </Button>
+            </div>
+          )}
+        </Modal>
 
         {/* Add Card Confirmation Modal */}
         <Modal open={showConfirmModal} onClose={() => setShowConfirmModal(false)} title={t("cards.confirmTitle")}>
