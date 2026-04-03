@@ -16,7 +16,7 @@ export function StatCard({ label, value, description, trend, icon, className }: 
           {label}
         </span>
         {icon && (
-          <span className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center text-primary">
+          <span className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center text-primary" aria-hidden="true">
             {icon}
           </span>
         )}

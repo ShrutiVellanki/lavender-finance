@@ -34,11 +34,12 @@ export const ChartContainer = React.forwardRef<
   React.ComponentProps<"div"> & {
     config: ChartConfig
     title?: string
+    "aria-label"?: string
     children: React.ComponentProps<
       typeof RechartsPrimitive.ResponsiveContainer
     >["children"]
   }
->(({ id, className, children, config, title, ...props }, ref) => {
+>(({ id, className, children, config, title, "aria-label": ariaLabel, ...props }, ref) => {
   const uniqueId = React.useId()
   const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`
 
@@ -47,6 +48,8 @@ export const ChartContainer = React.forwardRef<
       <div
         data-chart={chartId}
         ref={ref}
+        role="img"
+        aria-label={ariaLabel || title || "Chart"}
         className={cn(
           "flex aspect-video flex-col justify-center text-xs",
           "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground",

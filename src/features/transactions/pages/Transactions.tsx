@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Transaction, TransactionCategory, TransactionStatus, AccountData } from "@/types";
 import { fetchTransactions, fetchAccountData } from "@/services/api";
-import { Loading } from "@/shared/components/Loading";
+import { TransactionsSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Badge } from "@/shared/components/Badge";
 import { Button } from "@/shared/components/Button";
@@ -13,9 +13,11 @@ import { Select } from "@/shared/components/Dropdown";
 import { Autocomplete } from "@/shared/components/Autocomplete";
 import { useCurrency } from "@/shared/context/currency";
 import { Pagination } from "@/shared/components/Pagination";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Sparkles, X as XIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { CATEGORY_ICON, STATUS_ICON } from "@/shared/constants/category-icons";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
+import { nlSearch } from "@/services/nl-search";
 
 const CATEGORIES: TransactionCategory[] = ["Groceries", "Dining", "Transport", "Shopping", "Utilities", "Income", "Transfer", "Entertainment"];
 const STATUSES: TransactionStatus[] = ["completed", "pending", "failed"];
@@ -43,6 +45,8 @@ export default function Transactions() {
   const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
   const [searchMerchant, setSearchMerchant] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [nlQuery, setNlQuery] = useState("");
+  const [nlActive, setNlActive] = useState(false);
   const PAGE_SIZE = 15;
 
   const fetchData = useCallback(async () => {
@@ -75,14 +79,20 @@ export default function Transactions() {
     [allMerchants],
   );
 
+  const nlResult = useMemo(() => {
+    if (!nlActive || !nlQuery.trim()) return null;
+    return nlSearch(nlQuery, transactions);
+  }, [nlActive, nlQuery, transactions]);
+
   const filtered = useMemo(() => {
+    if (nlResult) return nlResult.filtered;
     let result = transactions;
     if (accountFilter !== "all") result = result.filter((t) => t.accountId === accountFilter);
     if (searchMerchant) result = result.filter((t) => t.merchant === searchMerchant);
     if (categoryFilter !== "all") result = result.filter((t) => t.category === categoryFilter);
     if (statusFilter !== "all") result = result.filter((t) => t.status === statusFilter);
     return result;
-  }, [transactions, accountFilter, searchMerchant, categoryFilter, statusFilter]);
+  }, [transactions, accountFilter, searchMerchant, categoryFilter, statusFilter, nlResult]);
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginatedTx = useMemo(
@@ -90,7 +100,7 @@ export default function Transactions() {
     [filtered, currentPage],
   );
 
-  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, searchMerchant, accountFilter]);
+  useEffect(() => { setCurrentPage(1); }, [categoryFilter, statusFilter, searchMerchant, accountFilter, nlActive, nlQuery]);
 
   const { totalIncome, totalExpenses, net } = useMemo(() => {
     let income = 0, expenses = 0;
@@ -98,16 +108,20 @@ export default function Transactions() {
     return { totalIncome: income, totalExpenses: expenses, net: income - expenses };
   }, [filtered]);
 
-  const hasActiveFilters = searchMerchant || categoryFilter !== "all" || statusFilter !== "all" || accountFilter !== "all";
+  useDocumentTitle(t("transactions.title"));
+
+  const hasActiveFilters = searchMerchant || categoryFilter !== "all" || statusFilter !== "all" || accountFilter !== "all" || nlActive;
 
   function clearAllFilters() {
     setSearchMerchant(null);
     setCategoryFilter("all");
     setStatusFilter("all");
     setAccountFilter("all");
+    setNlQuery("");
+    setNlActive(false);
   }
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  if (loading) return <TransactionsSkeleton />;
   if (error) return <ErrorDisplay message={error} onRetry={fetchData} title={t("common.error")} />;
 
   return (
@@ -136,8 +150,47 @@ export default function Transactions() {
           </Card>
         </div>
 
+        {/* AI Search */}
+        <div className="relative">
+          <div className="flex items-center gap-2 rounded-lg border border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed bg-lavenderDawn-surface dark:bg-lavenderMoon-surface px-3 py-2 focus-within:ring-2 focus-within:ring-lavenderDawn-iris/40 dark:focus-within:ring-lavenderMoon-iris/40 transition-shadow">
+            <Sparkles className="w-4 h-4 shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" aria-hidden="true" />
+            <input
+              type="text"
+              value={nlQuery}
+              onChange={(e) => {
+                setNlQuery(e.target.value);
+                setNlActive(e.target.value.trim().length > 0);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Escape") {
+                  setNlQuery("");
+                  setNlActive(false);
+                }
+              }}
+              placeholder="Ask anything — &quot;dining over $50 last month&quot;, &quot;largest expenses this week&quot;…"
+              aria-label="Search transactions with natural language"
+              className="flex-1 bg-transparent text-[13px] text-lavenderDawn-text dark:text-lavenderMoon-text placeholder:text-lavenderDawn-muted dark:placeholder:text-lavenderMoon-muted focus:outline-none"
+            />
+            {nlActive && (
+              <button
+                onClick={() => { setNlQuery(""); setNlActive(false); }}
+                aria-label="Clear search"
+                className="shrink-0 p-0.5 rounded hover:bg-lavenderDawn-highlightLow dark:hover:bg-lavenderMoon-highlightLow transition-colors"
+              >
+                <XIcon className="w-3.5 h-3.5 text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
+              </button>
+            )}
+          </div>
+          {nlResult?.interpretation && (
+            <p aria-live="polite" className="mt-1.5 text-[11px] text-lavenderDawn-iris dark:text-lavenderMoon-iris flex items-center gap-1.5">
+              <Sparkles className="w-3 h-3" />
+              {nlResult.interpretation}
+            </p>
+          )}
+        </div>
+
         {/* Filters */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:flex lg:items-end gap-2 sm:gap-3">
+        <div className={`grid grid-cols-2 sm:grid-cols-2 lg:flex lg:items-end gap-2 sm:gap-3 ${nlActive ? "opacity-50 pointer-events-none" : ""}`}>
           <div className="col-span-2 lg:flex-1">
             <label className="hidden sm:block mb-1.5 text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("transactions.merchant")}</label>
             <Autocomplete
@@ -275,7 +328,11 @@ export default function Transactions() {
                 ) : paginatedTx.map((tx) => (
                   <tr
                     key={tx.id}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`${tx.description}, ${formatCurrency(tx.amount)}, ${tx.category}, ${tx.status}`}
                     onClick={() => setSelectedTx(tx)}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelectedTx(tx); } }}
                     className="border-b border-lavenderDawn-highlightLow/50 dark:border-lavenderMoon-highlightLow/50 last:border-0 hover:bg-lavenderDawn-highlightLow/20 dark:hover:bg-lavenderMoon-highlightLow/10 transition-colors cursor-pointer"
                   >
                     <td className="px-6 py-3">
@@ -305,7 +362,7 @@ export default function Transactions() {
           </div>
           {filtered.length > 0 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-2 px-4 sm:px-6 py-3 border-t border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
-              <p className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">
+              <p aria-live="polite" className="text-xs text-lavenderDawn-muted dark:text-lavenderMoon-muted">
                 {t("transactions.showing", {
                   from: (currentPage - 1) * PAGE_SIZE + 1,
                   to: Math.min(currentPage * PAGE_SIZE, filtered.length),

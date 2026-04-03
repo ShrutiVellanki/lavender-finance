@@ -65,6 +65,15 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
     hoverTimeoutRef.current = setTimeout(() => setPopoverOpen(false), 200)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      setPopoverOpen((prev) => !prev)
+    } else if (e.key === "Escape" && popoverOpen) {
+      setPopoverOpen(false)
+    }
+  }
+
   const items: NavItem[] = NAV_ITEMS.map((item) => ({
     label: t(item.nameKey),
     href: item.href,
@@ -73,8 +82,8 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
   }))
 
   const brand = (
-    <Link to="/" className="flex items-center gap-2.5 min-w-0">
-      <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" />
+    <Link to="/" className="flex items-center gap-2.5 min-w-0" aria-label={isCollapsed ? "Lavender Finance — Home" : undefined}>
+      <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" aria-hidden="true" />
       {!isCollapsed && (
         <span className="text-[15px] font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text truncate">
           Lavender Finance
@@ -91,6 +100,12 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
       onMouseLeave={handleMouseLeave}
     >
       <div
+        role="button"
+        tabIndex={0}
+        aria-haspopup="true"
+        aria-expanded={popoverOpen}
+        aria-label={isCollapsed ? "User menu" : undefined}
+        onKeyDown={handleKeyDown}
         className={`flex items-center gap-3 rounded-lg transition-colors cursor-pointer ${isCollapsed ? "justify-center py-2" : "px-3 py-2"} ${
           pathname === "/settings"
             ? "bg-lavenderDawn-iris/10 dark:bg-lavenderMoon-iris/10"
@@ -114,6 +129,7 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
 
       {popoverOpen && (
         <div
+          role="menu"
           className="absolute z-50 bottom-0 left-full ml-2 bg-lavenderDawn-surface dark:bg-lavenderMoon-surface border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow rounded-lg shadow-lg p-1.5 min-w-[180px]"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}

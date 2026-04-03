@@ -145,12 +145,16 @@ export const CreditCardDisplay: React.FC<CreditCardDisplayProps> = ({ data, flip
   </div>
 )
 
-const CardInput: React.FC<CardInputProps> = ({ label, ...props }) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{label}</label>
-    <input {...props} className={inputCls} />
-  </div>
-)
+let cardInputCounter = 0
+const CardInput: React.FC<CardInputProps> = ({ label, ...props }) => {
+  const id = props.id || `card-input-${label?.toLowerCase().replace(/\s+/g, "-") || ++cardInputCounter}`
+  return (
+    <div className="flex flex-col gap-1">
+      <label htmlFor={id} className="text-xs font-medium uppercase tracking-widest text-muted-foreground">{label}</label>
+      <input id={id} {...props} className={inputCls} />
+    </div>
+  )
+}
 
 export const CreditCardForm: React.FC<CreditCardFormProps> = ({ onSubmit, className }) => {
   const [card, setCard] = useState<CreditCardData>({ number: "", name: "", expiry: "", cvv: "" })

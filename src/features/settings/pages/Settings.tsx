@@ -2,7 +2,7 @@ import { Layout } from "@/app/layout/layout";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { UserSettings, CurrencyCode } from "@/types";
 import { fetchSettings, updateSettings, setDataOverrides, clearDataOverrides, hasDataOverrides, validateDataOverride, exportAllData } from "@/services/api";
-import { Loading } from "@/shared/components/Loading";
+import { SettingsSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
@@ -10,6 +10,7 @@ import { Badge } from "@/shared/components/Badge";
 import { useCurrency } from "@/shared/context/currency";
 import { Save, User, Globe, Coins, Code2, Upload, Download, FileJson, Check, AlertTriangle, X, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
 const inputCls =
   "w-full h-9 rounded-lg border border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed bg-lavenderDawn-base dark:bg-lavenderMoon-overlay px-3 text-[13px] text-lavenderDawn-text dark:text-lavenderMoon-text placeholder:text-lavenderDawn-muted focus:outline-none focus:ring-1 focus:ring-lavenderDawn-iris dark:focus:ring-lavenderMoon-iris transition-colors";
@@ -61,6 +62,7 @@ export default function SettingsPage() {
   const [devError, setDevError] = useState<string | null>(null);
   const [dataOverrideActive, setDataOverrideActive] = useState(hasDataOverrides());
   const [appliedMessage, setAppliedMessage] = useState<string | null>(null);
+  useDocumentTitle(t("settings.title"));
 
   const load = useCallback(async () => {
     try {
@@ -178,7 +180,7 @@ export default function SettingsPage() {
     URL.revokeObjectURL(url);
   }
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  if (loading) return <SettingsSkeleton />;
   if (error && !settings) return <ErrorDisplay message={error} onRetry={load} title={t("common.error")} />;
 
   return (
@@ -205,16 +207,17 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.fullName")}</label>
-                  <input className={inputCls} value={draft?.name ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, name: e.target.value } : d)} />
+                  <label htmlFor="settings-name" className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.fullName")}</label>
+                  <input id="settings-name" className={inputCls} value={draft?.name ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, name: e.target.value } : d)} />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.email")}</label>
-                  <input className={inputCls} type="email" value={draft?.email ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, email: e.target.value } : d)} />
+                  <label htmlFor="settings-email" className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.email")}</label>
+                  <input id="settings-email" className={inputCls} type="email" value={draft?.email ?? ""} onChange={(e) => setDraft((d) => d ? { ...d, email: e.target.value } : d)} />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.phone")}</label>
+                  <label htmlFor="settings-phone" className="block text-xs font-medium text-lavenderDawn-muted dark:text-lavenderMoon-muted uppercase tracking-wider">{t("settings.phone")}</label>
                   <input
+                    id="settings-phone"
                     className={showPhoneError ? inputErrorCls : inputCls}
                     type="tel"
                     placeholder="(555) 123-4567"
@@ -224,9 +227,11 @@ export default function SettingsPage() {
                       setDraft((d) => d ? { ...d, phone: formatted } : d);
                     }}
                     onBlur={() => setPhoneTouched(true)}
+                    aria-invalid={showPhoneError || undefined}
+                    aria-describedby={showPhoneError ? "phone-error" : undefined}
                   />
                   {showPhoneError && (
-                    <p className="text-[11px] text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.phoneInvalid")}</p>
+                    <p id="phone-error" role="alert" className="text-[11px] text-lavenderDawn-love dark:text-lavenderMoon-love">{t("settings.phoneInvalid")}</p>
                   )}
                 </div>
 
@@ -237,7 +242,7 @@ export default function SettingsPage() {
                     <Save className="w-3.5 h-3.5" />
                     {saving ? t("settings.saving") : t("settings.saveChanges")}
                   </Button>
-                  {saved && <Badge variant="success">{t("common.saved")}</Badge>}
+                  {saved && <span role="status" aria-live="polite"><Badge variant="success">{t("common.saved")}</Badge></span>}
                 </div>
               </form>
             </Card>
@@ -270,12 +275,16 @@ export default function SettingsPage() {
               )}
 
               {appliedMessage && (
-                <p className="text-[12px] text-lavenderDawn-foam dark:text-lavenderMoon-foam">{appliedMessage}</p>
+                <p role="status" aria-live="polite" className="text-[12px] text-lavenderDawn-foam dark:text-lavenderMoon-foam">{appliedMessage}</p>
               )}
 
               <div className="space-y-2">
                 <p className="text-[12px] text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("settings.uploadJsonDesc")}</p>
                 <div
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Upload JSON file — click or drag and drop"
+                  onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click(); } }}
                   onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                   onDragLeave={() => setDragOver(false)}
                   onDrop={handleDrop}

@@ -6,7 +6,7 @@ import NetWorthChart from "@/features/dashboard/components/net-worth/net-worth";
 import { fetchAccountData, fetchChartData, getSavedCards } from "@/services/api";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account, NetWorthData, ChartData } from "@/types";
-import { Loading } from "@/shared/components/Loading";
+import { AccountsSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Card } from "@/shared/components/Card";
 import { Combobox } from "@/shared/components/Combobox";
@@ -16,6 +16,7 @@ import { CreditCard, Banknote as Bank, Car, Coins, House, DollarSign, Landmark, 
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { accountTypeLabels, accountSubtypeLabels } from "@/shared/constants/account-constants";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
 interface FetchError { message: string }
 
@@ -53,6 +54,7 @@ function CurrencyValue({ amount, bold = false }: { amount: number; bold?: boolea
 export default function AccountsPage() {
   const { t } = useTranslation();
   const { formatCurrency } = useCurrency();
+  useDocumentTitle(t("accounts.title"));
   const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
   const [rawChartData, setRawChartData] = useState<ChartData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -123,7 +125,7 @@ export default function AccountsPage() {
     return aggregateBalancesByDate(filtered);
   }, [rawChartData, typeFilter, groupedAccounts]);
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  if (loading) return <AccountsSkeleton />;
   if (error) return <ErrorDisplay message={error} onRetry={fetchData} title={t("common.error")} />;
 
   return (

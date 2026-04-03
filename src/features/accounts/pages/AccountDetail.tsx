@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { Account, Transaction, ChartDataPoint } from "@/types";
 import { fetchAccountData, fetchChartData, fetchTransactions } from "@/services/api";
-import { Loading } from "@/shared/components/Loading";
+import { AccountDetailSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
@@ -16,6 +16,7 @@ import {
 import { ArrowLeft, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { STATUS_ICON } from "@/shared/constants/category-icons";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
 const STATUS_VARIANT: Record<string, "success" | "warning" | "danger"> = {
   completed: "success", pending: "warning", failed: "danger",
@@ -33,6 +34,7 @@ export default function AccountDetail() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  useDocumentTitle(account ? account.name : "Account");
 
   const fetchData = useCallback(async () => {
     if (!id) return;
@@ -65,7 +67,7 @@ export default function AccountDetail() {
     return chartPoints.filter((_, i) => i % step === 0 || i === chartPoints.length - 1);
   }, [chartPoints]);
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  if (loading) return <AccountDetailSkeleton />;
   if (error || !account) return <ErrorDisplay message={error || t("accounts.accountNotFound")} onRetry={fetchData} title={t("common.error")} />;
 
   return (

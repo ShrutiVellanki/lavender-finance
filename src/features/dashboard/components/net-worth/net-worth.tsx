@@ -138,14 +138,18 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
             <h2 className="text-xs font-medium text-lavenderDawn-text/50 dark:text-lavenderMoon-text/50 tracking-wider uppercase">
               Net Worth
             </h2>
-            <div className="group relative">
-              <Info className="w-3 h-3 text-lavenderDawn-text/30 dark:text-lavenderMoon-text/30 cursor-help" />
-              <div className="fixed ml-2 w-[300px] hidden group-hover:block z-[9999]" style={{ top: 'var(--tooltip-y)', left: 'var(--tooltip-x)' }}>
-                <div className="bg-lavenderDawn-base dark:bg-lavenderMoon-base text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 text-xs p-3 rounded-lg shadow-xl border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
+            <button
+              type="button"
+              className="group relative"
+              aria-label="Net worth disclaimer"
+            >
+              <Info className="w-3 h-3 text-lavenderDawn-text/30 dark:text-lavenderMoon-text/30 cursor-help" aria-hidden="true" />
+              <div className="fixed ml-2 w-[300px] hidden group-hover:block group-focus:block z-[9999]" style={{ top: 'var(--tooltip-y)', left: 'var(--tooltip-x)' }}>
+                <div role="tooltip" className="bg-lavenderDawn-base dark:bg-lavenderMoon-base text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 text-xs p-3 rounded-lg shadow-xl border border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightLow">
                   This may not show your correct net worth if you haven't added all assets and liabilities.
                 </div>
               </div>
-            </div>
+            </button>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xl font-medium tracking-tight text-lavenderDawn-text dark:text-lavenderMoon-text">
@@ -163,6 +167,9 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
         <div className="relative">
           <button
             onClick={() => setIsTimeRangeOpen(!isTimeRangeOpen)}
+            aria-haspopup="listbox"
+            aria-expanded={isTimeRangeOpen}
+            aria-label={`Time range: ${TIME_RANGES.find(r => r.value === timeRange)?.label}`}
             className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-xs text-lavenderDawn-text/70 dark:text-lavenderMoon-text/70 bg-lavenderDawn-highlightLow/30 dark:bg-lavenderMoon-highlightLow/30 rounded-md hover:bg-lavenderDawn-highlightLow/50 dark:hover:bg-lavenderMoon-highlightLow/50 transition-colors"
           >
             {TIME_RANGES.find(r => r.value === timeRange)?.label}
@@ -198,7 +205,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({
         </div>
       </div>
 
-      <ChartContainer config={chartConfig} className="h-[200px] w-full">
+      <ChartContainer config={chartConfig} className="h-[200px] w-full" aria-label={`Net worth chart showing ${formatCurrency(currentNetWorth)} over time`}>
         {filteredData && filteredData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={filteredData}>

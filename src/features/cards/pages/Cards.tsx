@@ -9,9 +9,11 @@ import { Badge } from "@/shared/components/Badge";
 import { CardEntry, Account } from "@/types";
 import { fetchAccountData, fetchSettings, submitCard, getSavedCards, saveCard, removeCard } from "@/services/api";
 import { CreditCard, ShieldCheck, UserCheck, CheckCircle, Loader2, Plus, ArrowLeft, Trash2, Calendar, Hash, User as UserIcon, Wifi } from "lucide-react";
+import { CardsSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
 type Step = "list" | "detail" | "verify-identity" | "verify-pin" | "add-card" | "done";
 
@@ -64,6 +66,7 @@ export default function CardsPage() {
   }, []);
 
   useEffect(() => { loadData(); }, [loadData]);
+  useDocumentTitle(t("cards.title"));
 
   const flowSteps: { key: Step; label: string; icon: React.ReactNode }[] = [
     { key: "verify-identity", label: "Identity", icon: <UserCheck className="w-4 h-4" /> },
@@ -131,6 +134,8 @@ export default function CardsPage() {
     setStep("list");
   }
 
+  if (loading) return <CardsSkeleton />;
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -142,13 +147,7 @@ export default function CardsPage() {
               <p className="text-xs sm:text-[13px] text-lavenderDawn-muted dark:text-lavenderMoon-muted mt-1">{t("cards.subtitle")}</p>
             </div>
 
-            {loading && (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-5 h-5 animate-spin text-lavenderDawn-muted" />
-              </div>
-            )}
-
-            {!loading && cards.length === 0 && step === "list" && (
+            {cards.length === 0 && step === "list" && (
               <Card className="p-8 text-center space-y-4">
                 <CreditCard className="w-12 h-12 mx-auto text-lavenderDawn-muted dark:text-lavenderMoon-muted" />
                 <p className="text-sm text-lavenderDawn-muted dark:text-lavenderMoon-muted">{t("cards.noCards")}</p>
@@ -156,7 +155,7 @@ export default function CardsPage() {
               </Card>
             )}
 
-            {!loading && cards.length > 0 && step === "list" && (
+            {cards.length > 0 && step === "list" && (
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h2 className="text-sm font-medium text-lavenderDawn-text dark:text-lavenderMoon-text">{t("cards.yourCards")}</h2>
@@ -170,6 +169,7 @@ export default function CardsPage() {
                   key={card.id}
                   type="button"
                   onClick={() => !card.syncing && openCardDetail(card)}
+                  aria-label={`${card.name}, card ending in ${card.last4}${card.syncing ? ", syncing" : ""}`}
                   className="w-full relative pb-1 text-left cursor-pointer rounded-2xl transition-transform hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lavenderDawn-iris dark:focus-visible:ring-lavenderMoon-iris"
                 >
                       <CreditCardDisplay

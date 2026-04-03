@@ -16,7 +16,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside
       className={cn(
-        "flex flex-col border-r transition-all duration-300 ease-in-out h-full",
+        "group/sidebar flex flex-col border-r transition-all duration-300 ease-in-out h-full",
         "bg-lavenderDawn-surface dark:bg-lavenderMoon-surface border-lavenderDawn-highlightLow dark:border-lavenderMoon-highlightMed",
         collapsed ? "w-[60px]" : "w-[240px]",
         className,
@@ -42,6 +42,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {onCollapsedChange && !collapsed && (
           <button
             onClick={() => onCollapsedChange(true)}
+            aria-label="Collapse sidebar"
             className="w-7 h-7 flex items-center justify-center rounded-md text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-text dark:hover:text-lavenderMoon-text hover:bg-lavenderDawn-highlightLow dark:hover:bg-lavenderMoon-highlightLow transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -50,9 +51,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {onCollapsedChange && collapsed && (
           <button
             onClick={() => onCollapsedChange(false)}
-            className="absolute -right-3 top-4 w-6 h-6 flex items-center justify-center rounded-full bg-lavenderDawn-surface dark:bg-lavenderMoon-surface border border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed shadow-sm text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris transition-colors opacity-0 hover:opacity-100"
-            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
-            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0")}
+            aria-label="Expand sidebar"
+            className="absolute -right-3 top-4 w-6 h-6 flex items-center justify-center rounded-full bg-lavenderDawn-surface dark:bg-lavenderMoon-surface border border-lavenderDawn-highlightMed dark:border-lavenderMoon-highlightMed shadow-sm text-lavenderDawn-muted dark:text-lavenderMoon-muted hover:text-lavenderDawn-iris dark:hover:text-lavenderMoon-iris transition-all duration-200 opacity-0 group-hover/sidebar:opacity-100 focus-visible:opacity-100"
           >
             <ChevronRight className="w-3 h-3" />
           </button>
@@ -68,6 +68,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 key={item.href}
                 type="button"
                 onClick={() => onNavigate?.(item.href)}
+                aria-current={item.isActive ? "page" : undefined}
+                aria-label={collapsed ? item.label : undefined}
                 className={cn(
                   "group w-full flex items-center gap-3 rounded-lg transition-all duration-150",
                   collapsed ? "justify-center px-0 py-2.5" : "px-3 py-2",

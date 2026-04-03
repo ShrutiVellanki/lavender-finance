@@ -16,7 +16,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-lavenderDawn-base dark:bg-lavenderMoon-base">
-      <div className="fixed inset-y-0 left-0 z-30">
+      <a href="#main-content" className="skip-to-content">
+        Skip to main content
+      </a>
+      <div className="fixed inset-y-0 left-0 z-30 overflow-visible">
         <AppSidebar
           isCollapsed={isMobile || isCollapsed}
           onCollapsedChange={isMobile ? undefined : setIsCollapsed}
@@ -24,9 +27,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         />
       </div>
 
-      <main className={`transition-all duration-300 ease-in-out ${
-        (isMobile || isCollapsed) ? 'pl-[60px]' : 'pl-60'
-      }`}>
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className={`transition-all duration-300 ease-in-out ${
+          (isMobile || isCollapsed) ? 'pl-[60px]' : 'pl-60'
+        }`}
+      >
         <div className="max-w-[1200px] mx-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8">
           {children}
         </div>

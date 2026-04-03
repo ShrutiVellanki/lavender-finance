@@ -2,7 +2,7 @@ import { Layout } from "@/app/layout/layout";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { BudgetCategory } from "@/types";
 import { fetchBudgets } from "@/services/api";
-import { Loading } from "@/shared/components/Loading";
+import { BudgetSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { StatCard } from "@/shared/components/StatCard";
 import { ProgressBar } from "@/shared/components/ProgressBar";
@@ -21,6 +21,7 @@ import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Target, Trendin
 import { Tooltip } from "@/shared/components/Tooltip";
 import { useTranslation } from "react-i18next";
 import { CATEGORY_ICON } from "@/shared/constants/category-icons";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
 
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
@@ -78,6 +79,7 @@ export default function Budget() {
   }
 
   const isToday = currentMonth === now.getMonth() && currentYear === now.getFullYear();
+  useDocumentTitle(`${t("budget.title")} — ${MONTHS[currentMonth]} ${currentYear}`);
 
   const fetchData = useCallback(async (month: number, year: number) => {
     try {
@@ -102,7 +104,7 @@ export default function Budget() {
   const chartData = useMemo(() => budgets.map((b) => ({ category: b.category, budget: b.limit, spent: b.spent })), [budgets]);
   const gridColor = isDark ? "#44415a" : "#efeef5";
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  if (loading) return <BudgetSkeleton />;
   if (error) return <ErrorDisplay message={error} onRetry={() => fetchData(currentMonth, currentYear)} title={t("common.error")} />;
 
   return (
@@ -116,12 +118,12 @@ export default function Budget() {
         {/* Month Selector */}
         <div className="flex items-center justify-center gap-1.5 sm:gap-2">
           <Tooltip content={`${t("budget.goToEarliest")} — ${MONTHS[minMonth]} ${minYear}`}>
-            <Button variant="outline" size="icon" onClick={goToStart} disabled={!canGoBack}>
+            <Button variant="outline" size="icon" onClick={goToStart} disabled={!canGoBack} aria-label={`Go to earliest month: ${MONTHS[minMonth]} ${minYear}`}>
               <ChevronsLeft className="w-4 h-4" />
             </Button>
           </Tooltip>
           <Tooltip content={`${t("budget.goToPrevious")} — ${MONTHS[currentMonth === 0 ? 11 : currentMonth - 1]} ${currentMonth === 0 ? currentYear - 1 : currentYear}`}>
-            <Button variant="outline" size="icon" onClick={goBack} disabled={!canGoBack}>
+            <Button variant="outline" size="icon" onClick={goBack} disabled={!canGoBack} aria-label={`Go to previous month: ${MONTHS[currentMonth === 0 ? 11 : currentMonth - 1]} ${currentMonth === 0 ? currentYear - 1 : currentYear}`}>
               <ChevronLeft className="w-4 h-4" />
             </Button>
           </Tooltip>
@@ -141,12 +143,12 @@ export default function Budget() {
             )}
           </div>
           <Tooltip content={`${t("budget.goToNext")} — ${MONTHS[currentMonth === 11 ? 0 : currentMonth + 1]} ${currentMonth === 11 ? currentYear + 1 : currentYear}`}>
-            <Button variant="outline" size="icon" onClick={goForward} disabled={!canGoForward}>
+            <Button variant="outline" size="icon" onClick={goForward} disabled={!canGoForward} aria-label={`Go to next month: ${MONTHS[currentMonth === 11 ? 0 : currentMonth + 1]} ${currentMonth === 11 ? currentYear + 1 : currentYear}`}>
               <ChevronRight className="w-4 h-4" />
             </Button>
           </Tooltip>
           <Tooltip content={`${t("budget.goToLatest")} — ${MONTHS[maxMonth]} ${maxYear}`}>
-            <Button variant="outline" size="icon" onClick={goToEnd} disabled={!canGoForward}>
+            <Button variant="outline" size="icon" onClick={goToEnd} disabled={!canGoForward} aria-label={`Go to latest month: ${MONTHS[maxMonth]} ${maxYear}`}>
               <ChevronsRight className="w-4 h-4" />
             </Button>
           </Tooltip>
@@ -199,7 +201,7 @@ export default function Budget() {
         {/* Budget vs Actual Chart */}
         <Card className="p-4 sm:p-6">
           <h2 className="text-base sm:text-lg font-medium text-lavenderDawn-text dark:text-lavenderMoon-text mb-4">{t("budget.budgetVsActual")}</h2>
-          <ChartContainer config={budgetChartConfig} className="h-[220px] sm:h-[300px] w-full">
+          <ChartContainer config={budgetChartConfig} className="h-[220px] sm:h-[300px] w-full" aria-label={`Spending overview chart for ${MONTHS[currentMonth]} ${currentYear}`}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.5} />

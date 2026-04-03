@@ -176,6 +176,51 @@ body {
   -webkit-backface-visibility: hidden;
 }
 
+/* ── Skip to content ── */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+}
+.skip-to-content:focus {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: auto;
+  height: auto;
+  overflow: visible;
+}
+
+/* ── Cursor pointer on all interactive elements ── */
+button,
+a,
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+select,
+summary,
+label[for],
+input[type="checkbox"],
+input[type="radio"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="file"]::file-selector-button {
+  cursor: pointer;
+}
+
 /* ── Focus ring reset ── */
 :focus-visible {
   outline: 2px solid var(--color-lavenderDawn-iris);
@@ -184,4 +229,16 @@ body {
 }
 [data-theme="dark"] :focus-visible {
   outline-color: var(--color-lavenderMoon-iris);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

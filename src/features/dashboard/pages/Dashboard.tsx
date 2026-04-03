@@ -7,7 +7,7 @@ import {
   fetchAccountData, fetchChartData, fetchTransactions, fetchBudgets, fetchSpendingSummary,
 } from "@/services/api";
 import { aggregateBalancesByDate, groupAccountsByType } from "@/shared/utils";
-import { Loading } from "@/shared/components/Loading";
+import { DashboardSkeleton } from "@/shared/components/Skeleton/PageSkeletons";
 import { ErrorDisplay } from "@/shared/components/ErrorDisplay";
 import { StatCard } from "@/shared/components/StatCard";
 import { ProgressBar } from "@/shared/components/ProgressBar";
@@ -26,6 +26,9 @@ import {
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { STATUS_ICON } from "@/shared/constants/category-icons";
+import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
+import { generateInsights } from "@/services/ai-insights";
+import { AIInsightsPanel } from "@/features/dashboard/components/ai-insights/ai-insights";
 
 interface FetchError { message: string }
 
@@ -42,6 +45,7 @@ export default function Dashboard() {
   const isDark = theme === "dark";
   const { t } = useTranslation();
   const { formatCurrency } = useCurrency();
+  useDocumentTitle(t("dashboard.title"));
   const [groupedAccounts, setGroupedAccounts] = useState<{ [key: string]: Account[] } | null>(null);
   const [totalBalanceByDateArray, setTotalBalanceByDateArray] = useState<NetWorthData[] | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -93,7 +97,12 @@ export default function Dashboard() {
 
   const monthlySpending = useMemo(() => spending.reduce((s, c) => s + c.amount, 0), [spending]);
 
-  if (loading) return <Loading message={t("common.loading")} />;
+  const insights = useMemo(
+    () => generateInsights(transactions, budgets, spending, groupedAccounts ? Object.values(groupedAccounts).flat().reduce<Record<string, import("@/types").Account>>((acc, a) => { acc[a.id] = a; return acc; }, {}) : {}, formatCurrency),
+    [transactions, budgets, spending, groupedAccounts, formatCurrency],
+  );
+
+  if (loading) return <DashboardSkeleton />;
   if (error) return <ErrorDisplay message={error} onRetry={fetchData} title={t("common.error")} />;
 
   const recentTx = transactions.slice(0, 5);
@@ -144,6 +153,9 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* AI Insights */}
+          <AIInsightsPanel insights={insights} />
+
           {/* Spending by Category */}
           <Card>
             <CardHeader>
@@ -153,7 +165,7 @@ export default function Dashboard() {
               </p>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={spendingChartConfig} className="h-[280px] w-full">
+              <ChartContainer config={spendingChartConfig} className="h-[280px] w-full" aria-label="Spending by category bar chart showing last 30 days of expenses">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={spending} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={gridColor} opacity={0.5} />
