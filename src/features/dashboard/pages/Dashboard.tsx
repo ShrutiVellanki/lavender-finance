@@ -27,8 +27,6 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { STATUS_ICON } from "@/shared/constants/category-icons";
 import { useDocumentTitle } from "@/shared/hooks/useDocumentTitle";
-import { generateInsights } from "@/services/ai-insights";
-import { AIInsightsPanel } from "@/features/dashboard/components/ai-insights/ai-insights";
 
 interface FetchError { message: string }
 
@@ -97,11 +95,6 @@ export default function Dashboard() {
 
   const monthlySpending = useMemo(() => spending.reduce((s, c) => s + c.amount, 0), [spending]);
 
-  const insights = useMemo(
-    () => generateInsights(transactions, budgets, spending, groupedAccounts ? Object.values(groupedAccounts).flat().reduce<Record<string, import("@/types").Account>>((acc, a) => { acc[a.id] = a; return acc; }, {}) : {}, formatCurrency),
-    [transactions, budgets, spending, groupedAccounts, formatCurrency],
-  );
-
   if (loading) return <DashboardSkeleton />;
   if (error) return <ErrorDisplay message={error} onRetry={fetchData} title={t("common.error")} />;
 
@@ -152,9 +145,6 @@ export default function Dashboard() {
               />
             </div>
           </div>
-
-          {/* AI Insights */}
-          <AIInsightsPanel insights={insights} />
 
           {/* Spending by Category */}
           <Card>
