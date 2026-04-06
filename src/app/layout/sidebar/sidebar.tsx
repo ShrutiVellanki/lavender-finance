@@ -8,7 +8,6 @@ import {
   CreditCard,
   ArrowLeftRight,
   Settings,
-  PiggyBank,
   Sun,
   Moon,
   ExternalLink,
@@ -83,7 +82,14 @@ export const AppSidebar = ({ isCollapsed, onCollapsedChange, onNavigate, isMobil
 
   const brand = (
     <Link to="/" className="flex items-center gap-2.5 min-w-0" aria-label={isCollapsed ? "Lavender Finance — Home" : undefined}>
-      <PiggyBank className="w-[22px] h-[22px] shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" aria-hidden="true" />
+      <svg width="22" height="22" viewBox="0 0 32 32" fill="none" className="shrink-0 text-lavenderDawn-iris dark:text-lavenderMoon-iris" aria-hidden="true">
+        <rect x="5" y="10" width="17" height="14" rx="2" stroke="currentColor" strokeWidth="2" fill="none"/>
+        <path d="M22 14H25C26.5 14 28 15.5 28 17C28 18.5 26.5 20 25 20H22" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none"/>
+        <path d="M12 8C12 6.5 13 5.5 12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <path d="M16 7C16 5.5 17 4.5 16 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+        <path d="M14 16V24" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M11 18.5C11 17 12.2 16 14 16C15.8 16 17 17 17 18.2C17 19.5 15.8 20 14 20C12.2 20 11 20.8 11 22C11 23.2 12.2 24 14 24C15.8 24 17 23 17 21.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+      </svg>
       {!isCollapsed && (
         <span className="text-[15px] font-semibold tracking-[-0.02em] text-lavenderDawn-text dark:text-lavenderMoon-text truncate">
           Lavender Finance
